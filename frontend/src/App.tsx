@@ -1,12 +1,11 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import LandingPage from "./pages/LandingPage.tsx";
 import Profile from "./pages/Profile";
-import { useState } from "react";
 import Login from "./pages/Login.tsx";
-export default function App() {
-  const [token, setToken] = useState<string | null>(null);
+import useToken from "../hooks/useToken.tsx";
 
-  // show
+export default function App() {
+  const { token, setToken } = useToken();
   if (!token) {
     return <Login setToken={setToken} />;
   }

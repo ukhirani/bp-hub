@@ -1,7 +1,9 @@
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import "./Login.css";
+import type { UserToken } from "types/UserToken";
+
 type LoginProps = {
-  setToken: (token: string) => void;
+  setToken: (token: UserToken) => void;
 };
 
 type Credentials = {
