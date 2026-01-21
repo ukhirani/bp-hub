@@ -3,7 +3,7 @@ import type { UserToken } from "../types/UserToken.ts";
 
 export default function useToken() {
   const getToken = () => {
-    const tokenString = sessionStorage.getItem("token");
+    const tokenString = localStorage.getItem("token");
     if (!tokenString) {
       return null;
     }
@@ -14,7 +14,7 @@ export default function useToken() {
   const [token, setToken] = useState(getToken());
 
   const saveToken = (userToken: UserToken) => {
-    sessionStorage.setItem("token", JSON.stringify(userToken));
+    localStorage.setItem("token", JSON.stringify(userToken));
     setToken(userToken.token);
   };
 
