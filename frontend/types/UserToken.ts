@@ -1,3 +1,5 @@
+export type Token = string | null;
+
 export type UserToken = {
-  token: string;
+  token: Token;
 };

@@ -1,10 +1,7 @@
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import "./Login.css";
-import type { UserToken } from "types/UserToken";
-
-type LoginProps = {
-  setToken: (token: UserToken) => void;
-};
+import { useNavigate } from "react-router-dom";
+import useToken from "../../hooks/useToken";
 
 type Credentials = {
   username: string;
@@ -21,18 +18,29 @@ async function loginUser(credentials: Credentials) {
   }).then((data) => data.json());
 }
 
-export default function Login({ setToken }: LoginProps) {
-  const [username, setUserName] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+export default function Login() {
+  const { token, setToken } = useToken();
+  const navigate = useNavigate();
+
+  // If the user is already authenticated, send them to the landing page.
+  useEffect(() => {
+    if (token) {
+      navigate("/", { replace: true });
+    }
+  }, [token, navigate]);
+
+  const [username, setUserName] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const token = await loginUser({
-      username,
-      password,
-    });
+
+    const token = await loginUser({ username, password });
     setToken(token);
+
+    navigate("/", { replace: true });
   };
+
   return (
     <div className="login-wrapper">
       <h1>Please Log In</h1>
