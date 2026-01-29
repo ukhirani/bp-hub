@@ -1,17 +1,10 @@
 import { useState } from "react";
-import type { UserToken } from "../types/UserToken.ts";
+import { getStoredToken } from "../auth/auth.ts";
+import type { UserToken, Token } from "../types/UserToken.ts";
 
 export default function useToken() {
-  const getToken = () => {
-    const tokenString = localStorage.getItem("token");
-    if (!tokenString) {
-      return null;
-    }
-    const userToken = JSON.parse(tokenString);
-    return userToken?.token;
-  };
-
-  const [token, setToken] = useState(getToken());
+  // Store just the raw token value (string | null) in state.
+  const [token, setToken] = useState<Token>(getStoredToken());
 
   const saveToken = (userToken: UserToken) => {
     localStorage.setItem("token", JSON.stringify(userToken));
@@ -19,7 +12,7 @@ export default function useToken() {
   };
 
   return {
-    setToken: saveToken,
     token,
+    setToken: saveToken,
   };
 }
