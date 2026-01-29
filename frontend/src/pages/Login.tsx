@@ -7,7 +7,6 @@ import {
   FieldDescription,
   FieldGroup,
   FieldLabel,
-  FieldSeparator,
 } from "../components/ui/field";
 import { Input } from "@/components/ui/input";
 
@@ -105,7 +104,7 @@ export default function Login({
               </Field>
 
               <Field>
-                <Button variant="outline" type="submit">
+                <Button variant="default" type="submit">
                   Login
                 </Button>
               </Field>
