@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"os"
 )
 
 const Port = ":8080"
@@ -43,6 +42,5 @@ func main() {
 
 	if err := http.ListenAndServe(Port, nil); err != nil {
 		fmt.Println("Server error:", err)
-		os.Exit(1)
 	}
 }
