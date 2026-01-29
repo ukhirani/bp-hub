@@ -1,5 +1,6 @@
 import "../index.css";
 
+import bpLogo from "@/assets/white.png";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -68,11 +69,7 @@ export default function Login({
                   className="flex flex-col items-center gap-1 font-medium"
                 >
                   <div className="flex  items-center justify-center rounded-md">
-                    <img
-                      className="bp-logo"
-                      src="src/assets/white.png"
-                      alt=""
-                    />
+                    <img className="bp-logo" src={bpLogo} alt="" />
                   </div>
                   <span className="sr-only">Boilerplate</span>
                 </a>
