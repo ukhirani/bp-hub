@@ -7,6 +7,8 @@ import LandingPage from "./pages/LandingPage.tsx";
 import Profile from "./pages/Profile.tsx";
 import { authLoader } from "../auth/authloader.ts";
 
+import "./index.css";
+
 function RouterWrapper() {
   const router = createBrowserRouter([
     {
@@ -25,7 +27,7 @@ function RouterWrapper() {
     },
   ]);
 
-  return <RouterProvider router={router} fallbackElement={<></>} />;
+  return <RouterProvider router={router} />;
 }
 
 createRoot(document.getElementById("root")!).render(
