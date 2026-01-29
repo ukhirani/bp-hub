@@ -22,7 +22,7 @@ type Credentials = {
 };
 
 async function loginUser(credentials: Credentials) {
-  return fetch("http://localhost:8080/login", {
+  return fetch("https://bp-hub-render-service.onrender.com/login", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
