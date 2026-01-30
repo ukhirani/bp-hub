@@ -14,6 +14,7 @@ const LandingPage = () => {
         </h1>
         <Button
           variant="link"
+          className="underline cursor-pointer"
           onClick={() => navigate("/login", { replace: true })}
         >
           Get Started

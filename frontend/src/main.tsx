@@ -5,6 +5,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Login from "./pages/Login.tsx";
 import Home from "./pages/Home.tsx";
 import Profile from "./pages/Profile.tsx";
+import NotFound from "./pages/NotFound.tsx";
 import { authLoader } from "../auth/authloader.ts";
 
 import "./index.css";
@@ -20,9 +21,13 @@ function RouterWrapper() {
       element: <Home />,
     },
     {
-      path: "/profile",
+      path: "/profile/:id?",
       loader: authLoader,
       element: <Profile />,
+    },
+    {
+      path: "*",
+      element: <NotFound>Page not found</NotFound>,
     },
   ]);
 
