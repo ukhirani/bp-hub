@@ -4,12 +4,15 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 
-	"github.com/joho/godotenv"
-
 	firebase "firebase.google.com/go/v4"
+	"github.com/joho/godotenv"
 	"google.golang.org/api/option"
+
+	"github.com/ukhirani/bp-hub/backend/api/auth"
+	"github.com/ukhirani/bp-hub/backend/api/templates"
 )
 
 func main() {
@@ -39,13 +42,12 @@ func main() {
 	defer client.Close() // Close the client when main exits
 	fmt.Println("Firestore client obtained.")
 
-	fmt.Println("\nRetrieving documents from 'users' collection:")
-	iter := client.Collection("users").Documents(ctx)
-	docs, err := iter.GetAll()
-	if err != nil {
-		log.Fatalf("Failed to iterate through documents: %v", err)
-	}
-	for _, doc := range docs {
-		fmt.Printf("Document ID: %s, Data: %v\n", doc.Ref.ID, doc.Data())
+	http.HandleFunc("/login", auth.LoginHandler(client, ctx))
+	http.HandleFunc("/getTemplates", templates.GetTemplatesHandler(client, ctx))
+
+	fmt.Println("Listening server on :8080...")
+	if err := http.ListenAndServe(":8080", nil); err != nil {
+		fmt.Println("Server error:", err)
+		os.Exit(1)
 	}
 }
