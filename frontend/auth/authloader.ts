@@ -6,7 +6,7 @@ export function authLoader() {
 
   // If there is no token, redirect to login.
   if (!token) {
-    return redirect("/login");
+    return redirect("/");
   }
 
   // Authorized: allow the route element to render.

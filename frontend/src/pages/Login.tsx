@@ -60,7 +60,7 @@ export default function Login({
   return (
     <div className="bg-background flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
       <div className="w-full max-w-sm">
-        <div className={cn("flex flex-col gap-5", className)} {...props}>
+        <div className={cn("flex flex-col gap-3", className)} {...props}>
           <form onSubmit={handleSubmit}>
             <FieldGroup>
               <div className="flex flex-col items-center gap-1 text-center">
@@ -74,9 +74,6 @@ export default function Login({
                   <span className="sr-only">Boilerplate</span>
                 </a>
                 <h2 className="text-xl font-bold">Welcome to Boilerplate</h2>
-                <FieldDescription>
-                  Don&apos;t have an account? <a href="#">Sign up</a>
-                </FieldDescription>
               </div>
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
@@ -101,10 +98,15 @@ export default function Login({
               </Field>
 
               <Field>
-                <Button variant="default" type="submit">
+                <Button className="mt-2" variant="default" type="submit">
                   Login
                 </Button>
               </Field>
+              <div className="flex flex-col items-center mt-2 gap-1 text-center">
+                <FieldDescription>
+                  Don&apos;t have an account? <a href="#">Sign up</a>
+                </FieldDescription>
+              </div>
             </FieldGroup>
           </form>
         </div>

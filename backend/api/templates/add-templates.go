@@ -36,7 +36,6 @@ func AddTemplateHandler(client *firestore.Client, ctx context.Context) http.Hand
 			UpdatedAt:          time.Now(),
 		}
 
-		// Add the random template to the "templates" collection
 		docRef, _, err := client.Collection("templates").Add(ctx, randomTemplate)
 		if err != nil {
 			log.Fatalf("Failed to add random template: %v", err)
