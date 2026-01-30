@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import Login from "./pages/Login.tsx";
-import LandingPage from "./pages/LandingPage.tsx";
+import Home from "./pages/Home.tsx";
 import Profile from "./pages/Profile.tsx";
 import { authLoader } from "../auth/authloader.ts";
 
@@ -17,8 +17,7 @@ function RouterWrapper() {
     },
     {
       path: "/",
-      loader: authLoader,
-      element: <LandingPage />,
+      element: <Home />,
     },
     {
       path: "/profile",
