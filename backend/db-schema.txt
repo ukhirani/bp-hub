@@ -1,0 +1,36 @@
+collection - templates
+
+template-schema
+- id (int) (auto increment)
+- username (string)
+- template-name (string)
+- type - (dir/file)
+- github-repo-link (string) (if dir type)
+- pre cmds - string[]
+- post cmds - string[]
+- tags - string[]
+- code (if file type boilerplate) - string
+- stars
+- clones
+- usage (show the command to clone the boilerplate)
+- fork_of (int) (parent boilerplate's id will be here)
+- forks (optional feature)
+- forked_boilerplates (id[]) (array of id's that have forked this boilerplate)
+- description
+- documentation (as of now only editable through website) (markdown)
+- created_at (date)
+- updated_at (date)
+
+future-scopes
+- is_repl 
+- interpolation
+
+
+collection - users 
+  id (int) (auto increment)
+  name (string) (not duplicate)
+  boilerplates : id[]
+
+
+
+

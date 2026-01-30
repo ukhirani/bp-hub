@@ -1,0 +1,4 @@
+/login - will receive username and pwd as of now
+/signup - will receive username and pwd and give back hash of the otp generated
+
+then on the client side when the user enters the OTP - we can then verify the hash 

@@ -1,0 +1,21 @@
+bp clone <username>/<template-name> <alias-name>
+
+steps - 
+
+what happens on the api side - 
+  first seperate the username and the bp-name
+  see if the user exists
+  see if the template exists
+
+what happens on the cli side - (technically this part should be first, hence we can then also increment and add the cloning logic, im talking about the number of times a template has been cloned)
+  see if the alias named template doesn't exist in the the current system
+  if yes - see if file type or dir type template
+    if dir type 
+      - degit clone the repo in a temporary dir
+      - create a dir type template for the user with the content of the temp dir
+    if file type :
+      - simply copy the code from the respones
+      - make a new file type template for the user with the code's content
+    in both cases copy the configs
+      - using viper and the response of the api create a yaml file of the alias name in the configs folder
+   
