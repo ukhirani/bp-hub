@@ -3,7 +3,6 @@ package templates
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -17,15 +16,11 @@ func GetTemplatesHandler(client *firestore.Client, ctx context.Context) http.Han
 		// Handler logic to get templates
 		utils.ConfigureHeader(w)
 
-		fmt.Println("\nRetrieving documents from 'templates' collection:")
 		iter := client.Collection("templates").Documents(ctx)
 		docs, err := iter.GetAll()
 		if err != nil {
 			log.Fatalf("Failed to iterate through documents: %v", err)
 		}
-		// for _, doc := range docs {
-		// 	fmt.Printf("Document ID: %s, Data: %v\n", doc.Ref.ID, doc.Data())
-		// }
 
 		w.WriteHeader(http.StatusOK)
 		// Prepare a slice to hold the templates data
