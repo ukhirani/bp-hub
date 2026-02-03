@@ -78,7 +78,7 @@ export default function Sidebar() {
         {/* Teams section */}
         <div className="px-3 py-4 border-t border-gray-800 flex-shrink-0">
           <h3 className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
-            Your teams
+            Your Templates
           </h3>
           <div className="space-y-1">
             {teams.map((team) => (
@@ -103,7 +103,7 @@ export default function Sidebar() {
               alt="User avatar"
               className="w-8 h-8 rounded-full"
             />
-            <span className="text-sm font-medium text-white">Tom Cook</span>
+            <span className="text-sm font-medium text-white">Umang Hirani</span>
           </button>
         </div>
       </aside>

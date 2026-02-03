@@ -36,23 +36,23 @@ const NavigationContext = createContext<NavigationContextType | undefined>(
 
 // Navigation items
 const navItems: NavItem[] = [
-  { name: "Projects", icon: FolderKanban, path: "/" },
-  { name: "Deployments", icon: Rocket, path: "/deployments" },
-  { name: "Activity", icon: Activity, path: "/activity" },
-  { name: "Domains", icon: Globe, path: "/domains" },
-  { name: "Usage", icon: BarChart3, path: "/usage" },
+  { name: "Templates", icon: FolderKanban, path: "/" },
+  // { name: "Deployments", icon: Rocket, path: "/deployments" },
+  // { name: "Activity", icon: Activity, path: "/activity" },
+  // { name: "Domains", icon: Globe, path: "/domains" },
+  // { name: "Usage", icon: BarChart3, path: "/usage" },
   { name: "Settings", icon: Settings, path: "/settings" },
 ];
 
 // Teams data
 const teams: Team[] = [
-  { name: "Planetaria", initial: "P" },
-  { name: "Protocol", initial: "P" },
-  { name: "Tailwind Labs", initial: "T" },
+  { name: "cpp-template", initial: "C" },
+  { name: "react-tailwind", initial: "R" },
+  { name: "go-server-template", initial: "G" },
 ];
 
 export function NavigationProvider({ children }: { children: ReactNode }) {
-  const [activeNav, setActiveNav] = useState("Projects");
+  const [activeNav, setActiveNav] = useState("Templates");
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (

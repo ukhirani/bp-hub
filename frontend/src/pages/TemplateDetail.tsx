@@ -185,13 +185,13 @@ export default function TemplateDetail() {
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
       {/* Back link */}
-      <Link
-        to="/"
-        className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-6 transition-colors"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        <span>Back to templates</span>
-      </Link>
+      {/* <Link */}
+      {/*   to="/" */}
+      {/*   className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-6 transition-colors" */}
+      {/* > */}
+      {/*   <ArrowLeft className="w-4 h-4" /> */}
+      {/*   <span>Back to templates</span> */}
+      {/* </Link> */}
 
       {/* Header */}
       <div className="border-b border-gray-800 pb-6 mb-6">
@@ -232,14 +232,14 @@ export default function TemplateDetail() {
             <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-300 border border-gray-700 rounded-md hover:bg-gray-800 transition-colors">
               <Star className="w-4 h-4" />
               <span>Star</span>
-              <span className="ml-1 px-1.5 py-0.5 text-xs bg-gray-800 rounded">
+              <span className="ml-1 px-1.5 py-0.5 text-xs bg-gray-800 rounded-xl">
                 {template.Stars}
               </span>
             </button>
             <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-300 border border-gray-700 rounded-md hover:bg-gray-800 transition-colors">
               <GitFork className="w-4 h-4" />
               <span>Fork</span>
-              <span className="ml-1 px-1.5 py-0.5 text-xs bg-gray-800 rounded">
+              <span className="ml-1 px-1.5 py-0.5 text-xs bg-gray-800 rounded-xl">
                 {template.Clones}
               </span>
             </button>
@@ -297,9 +297,12 @@ export default function TemplateDetail() {
           <section>
             <h2 className="flex items-center gap-2 text-lg font-semibold text-white mb-4">
               <Terminal className="w-5 h-5" />
-              Pre-installation Commands
+              Pre-Generation Commands
             </h2>
-            <CommandList commands={template.PreCmds} title="Run before setup" />
+            <CommandList
+              commands={template.PreCmds}
+              title="Runs before generation"
+            />
           </section>
         )}
 
@@ -308,9 +311,12 @@ export default function TemplateDetail() {
           <section>
             <h2 className="flex items-center gap-2 text-lg font-semibold text-white mb-4">
               <Terminal className="w-5 h-5" />
-              Post-installation Commands
+              Post-Generation Commands
             </h2>
-            <CommandList commands={template.PostCmds} title="Run after setup" />
+            <CommandList
+              commands={template.PostCmds}
+              title="Runs after generation"
+            />
           </section>
         )}
 
@@ -346,8 +352,8 @@ export default function TemplateDetail() {
           </section>
         )}
 
-        {/* Fork info */}
-        {template.ForkOf && (
+        {/* Fork info 
+        {!!template.ForkOf && (
           <section className="p-4 bg-gray-800/30 border border-gray-700 rounded-lg">
             <p className="text-sm text-gray-400">
               <GitFork className="w-4 h-4 inline mr-1" />
@@ -355,7 +361,7 @@ export default function TemplateDetail() {
               <span className="text-blue-400">{template.ForkOf}</span>
             </p>
           </section>
-        )}
+        )}*/}
       </div>
     </div>
   );
