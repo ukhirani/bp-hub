@@ -3,9 +3,9 @@ import type { ReactNode } from "react";
 import type { LucideIcon } from "lucide-react";
 import {
   FolderKanban,
-  Rocket,
-  Activity,
-  Globe,
+  // Rocket,
+  // Activity,
+  // Globe,
   BarChart3,
   Settings,
 } from "lucide-react";
@@ -40,7 +40,7 @@ const navItems: NavItem[] = [
   // { name: "Deployments", icon: Rocket, path: "/deployments" },
   // { name: "Activity", icon: Activity, path: "/activity" },
   // { name: "Domains", icon: Globe, path: "/domains" },
-  // { name: "Usage", icon: BarChart3, path: "/usage" },
+  { name: "Analytics", icon: BarChart3, path: "/analytics" },
   { name: "Settings", icon: Settings, path: "/settings" },
 ];
 
