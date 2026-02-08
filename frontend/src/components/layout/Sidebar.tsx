@@ -13,7 +13,6 @@ export default function Sidebar() {
     sidebarOpen,
     setSidebarOpen,
     navItems,
-    teams,
   } = useNavigation();
   const navigate = useNavigate();
   const { token, clearToken } = useToken();

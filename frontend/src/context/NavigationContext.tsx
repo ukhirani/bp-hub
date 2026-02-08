@@ -6,8 +6,7 @@ import {
   // Rocket,
   // Activity,
   // Globe,
-  BarChart3,
-  Settings,
+
 } from "lucide-react";
 
 export interface NavItem {
