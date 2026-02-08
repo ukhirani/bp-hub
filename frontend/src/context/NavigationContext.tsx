@@ -40,8 +40,8 @@ const navItems: NavItem[] = [
   // { name: "Deployments", icon: Rocket, path: "/deployments" },
   // { name: "Activity", icon: Activity, path: "/activity" },
   // { name: "Domains", icon: Globe, path: "/domains" },
-  { name: "Analytics", icon: BarChart3, path: "/analytics" },
-  { name: "Settings", icon: Settings, path: "/settings" },
+  // { name: "Analytics", icon: BarChart3, path: "/analytics" },
+  // { name: "Settings", icon: Settings, path: "/settings" },
 ];
 
 // Teams data

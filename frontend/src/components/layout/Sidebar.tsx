@@ -124,7 +124,7 @@ export default function Sidebar() {
         </nav>
 
         {/* Teams section */}
-        <div className="px-3 py-4 border-t border-gray-800 flex-shrink-0">
+        {/* <div className="px-3 py-4 border-t border-gray-800 flex-shrink-0">
           <h3 className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
             Your Templates
           </h3>
@@ -141,7 +141,7 @@ export default function Sidebar() {
               </button>
             ))}
           </div>
-        </div>
+        </div> */}
 
         {/* User profile */}
         <div className="p-4 border-t border-gray-800 flex-shrink-0 relative">

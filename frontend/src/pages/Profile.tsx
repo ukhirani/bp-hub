@@ -233,13 +233,13 @@ export default function Profile() {
               <RandomAvatar name={profile.username} size={72} />
             </div>
             <div className="flex-1 min-w-0">
-              <div className="flex flex-wrap items-center gap-3">
+              <div className="flex flex-wrap items-center gap-3 w-full">
                 <h1 className="text-2xl font-semibold text-white">{profile.username}</h1>
                 {isOwner && !isEditing && (
                   <Button
                     variant="secondary"
                     onClick={() => setIsEditing(true)}
-                    className="bg-blue-500/10 text-blue-300 border border-blue-500/30 hover:bg-blue-500/20"
+                    className="ml-auto bg-blue-500/10 text-blue-300 border border-blue-500/30 hover:bg-blue-500/20"
                   >
                     <Pencil className="h-4 w-4" />
                     Edit profile
@@ -297,7 +297,7 @@ export default function Profile() {
         <div className="rounded border border-gray-800 bg-[#0f1117]">
           <div className="border-b border-gray-800 px-6 py-4">
             <h2 className="text-lg font-semibold text-white">Templates</h2>
-            <p className="text-sm text-gray-400">Templates created by {profile.username}.</p>
+            {/* <p className="text-sm text-gray-400">Templates created by {profile.username}.</p> */}
           </div>
           {templates.length === 0 ? (
             <div className="px-6 py-8 text-sm text-gray-500">No templates yet.</div>
