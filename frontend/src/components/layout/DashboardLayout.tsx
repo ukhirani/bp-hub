@@ -4,6 +4,8 @@ import Sidebar from "./Sidebar";
 import { NavigationProvider, useNavigation } from "@/context/NavigationContext";
 import useToken from "../../../hooks/useToken";
 import LandingPage from "@/pages/LandingPage";
+import { useEffect, useState } from "react";
+import Snackbar, { type SnackbarNotice } from "@/components/ui/snackbar";
 
 function DashboardContent() {
   const { setSidebarOpen } = useNavigation();
@@ -50,6 +52,21 @@ function DashboardContent() {
 
 export default function DashboardLayout() {
   const { token } = useToken();
+  const [notice, setNotice] = useState<SnackbarNotice | null>(null);
+
+  useEffect(() => {
+    const stored = sessionStorage.getItem("app_notice");
+    if (!stored) return;
+
+    try {
+      const parsed = JSON.parse(stored) as SnackbarNotice;
+      setNotice(parsed);
+    } catch {
+      setNotice(null);
+    } finally {
+      sessionStorage.removeItem("app_notice");
+    }
+  }, []);
 
   // Show landing page if not authenticated
   if (!token) {
@@ -58,6 +75,7 @@ export default function DashboardLayout() {
 
   return (
     <NavigationProvider>
+      <Snackbar notice={notice} onClose={() => setNotice(null)} />
       <DashboardContent />
     </NavigationProvider>
   );

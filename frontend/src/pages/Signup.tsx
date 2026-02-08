@@ -22,12 +22,9 @@ type Credentials = {
   password: string;
 };
 
-type AuthSuccessResponse = {
-  idToken: string;
-  email: string;
-  refreshToken: string;
-  expiresIn: string;
-  localId: string;
+type SignupSuccessResponse = {
+  status: string;
+  email?: string;
 };
 
 type AuthErrorResponse = {
@@ -36,47 +33,37 @@ type AuthErrorResponse = {
   };
 };
 
-function mapAuthError(code: string): SnackbarNotice {
+function mapSignupError(code: string): SnackbarNotice {
   switch (code) {
-    case "EMAIL_NOT_VERIFIED":
+    case "PASSWORD_MISMATCH":
       return {
-        title: "Verify your email",
-        message:
-          "Check your inbox and click the verification link to continue.",
+        title: "Passwords do not match",
+        message: "Make sure both password fields are the same.",
         tone: "warning",
       };
-    case "INVALID_LOGIN_CREDENTIALS":
-    case "INVALID_PASSWORD":
-    case "EMAIL_NOT_FOUND":
+    case "EMAIL_EXISTS":
       return {
-        title: "Incorrect email or password",
-        message:
-          "Double-check your details and try again. If you forgot your password, reset it.",
-        tone: "error",
+        title: "Email already in use",
+        message: "Try logging in instead, or use a different email.",
+        tone: "warning",
       };
-    case "USER_DISABLED":
+    case "WEAK_PASSWORD":
       return {
-        title: "Account disabled",
-        message: "This account is disabled. Contact support to restore access.",
-        tone: "error",
-      };
-    case "TOO_MANY_ATTEMPTS_TRY_LATER":
-      return {
-        title: "Too many attempts",
-        message: "Please wait a few minutes before trying again.",
-        tone: "error",
+        title: "Password too weak",
+        message: "Use at least 6 characters with a mix of letters and numbers.",
+        tone: "warning",
       };
     default:
       return {
-        title: "Unable to sign in",
+        title: "Unable to create account",
         message: "Please try again. If the issue persists, try later.",
         tone: "error",
       };
   }
 }
 
-async function loginUser(credentials: Credentials) {
-  const response = await fetch("http://localhost:8080/login", {
+async function signupUser(credentials: Credentials) {
+  const response = await fetch("http://localhost:8080/signup", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -85,26 +72,25 @@ async function loginUser(credentials: Credentials) {
   });
 
   const data = (await response.json().catch(() => ({}))) as
-    | AuthSuccessResponse
+    | SignupSuccessResponse
     | AuthErrorResponse;
 
   if (!response.ok) {
     const message =
-      (data as AuthErrorResponse)?.error?.message ?? "LOGIN_FAILED";
+      (data as AuthErrorResponse)?.error?.message ?? "SIGNUP_FAILED";
     throw new Error(message);
   }
 
-  return data as AuthSuccessResponse;
+  return data as SignupSuccessResponse;
 }
 
-export default function Login({
+export default function Signup({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const { token, setToken } = useToken();
+  const { token } = useToken();
   const navigate = useNavigate();
 
-  // If the user is already authenticated, send them to the landing page.
   useEffect(() => {
     if (token) {
       navigate("/", { replace: true });
@@ -113,6 +99,7 @@ export default function Login({
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [notice, setNotice] = useState<SnackbarNotice | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -120,22 +107,32 @@ export default function Login({
     e.preventDefault();
 
     setNotice(null);
+
+    if (password !== confirmPassword) {
+      setNotice(mapSignupError("PASSWORD_MISMATCH"));
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
-      const auth = await loginUser({ email, password });
-      setToken({ token: auth.idToken });
-      const displayName = auth.email?.split("@")[0] ?? "there";
-      const welcomeNotice = {
-        title: `Welcome back, ${displayName}`,
-        message: "You are signed in and ready to go.",
-        tone: "success",
-      };
-      sessionStorage.setItem("app_notice", JSON.stringify(welcomeNotice));
-      navigate("/", { replace: true });
+      const result = await signupUser({ email, password });
+      if (result.status === "VERIFICATION_EMAIL_SENT") {
+        setNotice({
+          title: "Verify your email",
+          message: `We sent a verification link to ${result.email ?? email}.`,
+          tone: "success",
+        });
+      } else {
+        setNotice({
+          title: "Signup complete",
+          message: "Please check your email for the verification link.",
+          tone: "success",
+        });
+      }
     } catch (err) {
-      const code = err instanceof Error ? err.message : "LOGIN_FAILED";
-      setNotice(mapAuthError(code));
+      const code = err instanceof Error ? err.message : "SIGNUP_FAILED";
+      setNotice(mapSignupError(code));
     } finally {
       setIsSubmitting(false);
     }
@@ -158,7 +155,7 @@ export default function Login({
                   </div>
                   <span className="sr-only">Boilerplate</span>
                 </a>
-                <h2 className="text-xl font-bold">Welcome to Boilerplate</h2>
+                <h2 className="text-xl font-bold">Create your account</h2>
               </div>
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
@@ -183,18 +180,29 @@ export default function Login({
               </Field>
 
               <Field>
+                <FieldLabel htmlFor="confirmPassword">Confirm password</FieldLabel>
+                <Input
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  id="confirmPassword"
+                  type="password"
+                  placeholder="•••••••••••••••••"
+                  required
+                />
+              </Field>
+
+              <Field>
                 <Button
                   className="mt-2"
                   variant="default"
                   type="submit"
                   disabled={isSubmitting}
                 >
-                  Login
+                  Sign up
                 </Button>
               </Field>
               <div className="flex flex-col items-center mt-2 gap-1 text-center">
                 <FieldDescription>
-                  Don&apos;t have an account? <Link to="/signup">Sign up</Link>
+                  Already have an account? <Link to="/login">Log in</Link>
                 </FieldDescription>
               </div>
             </FieldGroup>
