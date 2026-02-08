@@ -26,6 +26,16 @@ type UserStatusResponse struct {
 	Username   string `json:"username,omitempty"`
 }
 
+type UserProfileUpdateRequest struct {
+	IDToken            string `json:"idToken"`
+	GithubLink         string `json:"github_link"`
+	ProfileDescription string `json:"profile_description"`
+}
+
+type UserProfileUpdateResponse struct {
+	Username string `json:"username"`
+}
+
 type UserProfile struct {
 	Username           string            `json:"username" firestore:"username"`
 	UID                string            `json:"uid" firestore:"uid"`

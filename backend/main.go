@@ -73,7 +73,10 @@ func main() {
 	http.HandleFunc("/registerUserDetails", users.RegisterUserDetailsHandler(client, authClient, ctx))
 	http.HandleFunc("/checkUsername", users.CheckUsernameHandler(client, authClient, ctx))
 	http.HandleFunc("/userStatus", users.UserStatusHandler(client, authClient, ctx))
+	http.HandleFunc("/getUserProfile", users.GetUserProfileHandler(client, ctx))
+	http.HandleFunc("/updateUserProfile", users.UpdateUserProfileHandler(client, authClient, ctx))
 	http.HandleFunc("/getTemplates", templates.GetTemplatesHandler(client, ctx))
+	http.HandleFunc("/getUserTemplates", templates.GetUserTemplatesHandler(client, ctx))
 	http.HandleFunc("/addTemplate", templates.AddTemplateHandler(client, authClient, ctx))
 	http.HandleFunc("/setTemplate", templates.SetTemplateHandler(client, ctx))
 
