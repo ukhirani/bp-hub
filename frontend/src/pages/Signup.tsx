@@ -63,7 +63,7 @@ function mapSignupError(code: string): SnackbarNotice {
 }
 
 async function signupUser(credentials: Credentials) {
-  const response = await fetch("http://localhost:8080/signup", {
+  const response = await fetch("https://bp-hub-render-service.onrender.com/signup", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

@@ -81,7 +81,7 @@ function mapAuthError(code: string): SnackbarNotice {
 }
 
 async function loginUser(credentials: Credentials) {
-  const response = await fetch("http://localhost:8080/login", {
+  const response = await fetch("https://bp-hub-render-service.onrender.com/login", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -103,7 +103,7 @@ async function loginUser(credentials: Credentials) {
 }
 
 async function fetchUserStatus(idToken: string) {
-  const response = await fetch("http://localhost:8080/userStatus", {
+  const response = await fetch("https://bp-hub-render-service.onrender.com/userStatus", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

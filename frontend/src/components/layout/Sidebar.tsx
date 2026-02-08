@@ -25,7 +25,7 @@ export default function Sidebar() {
 
     const controller = new AbortController();
 
-    fetch("http://localhost:8080/userStatus", {
+    fetch("https://bp-hub-render-service.onrender.com/userStatus", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

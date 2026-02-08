@@ -35,7 +35,7 @@ function normalizeUsername(value: string) {
 }
 
 async function checkUsername(idToken: string, username: string) {
-  const response = await fetch("http://localhost:8080/checkUsername", {
+  const response = await fetch("https://bp-hub-render-service.onrender.com/checkUsername", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -57,7 +57,7 @@ async function checkUsername(idToken: string, username: string) {
 }
 
 async function fetchUserStatus(idToken: string) {
-  const response = await fetch("http://localhost:8080/userStatus", {
+  const response = await fetch("https://bp-hub-render-service.onrender.com/userStatus", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -84,7 +84,7 @@ async function registerUserDetails(
   githubLink: string,
   profileDescription: string,
 ) {
-  const response = await fetch("http://localhost:8080/registerUserDetails", {
+  const response = await fetch("https://bp-hub-render-service.onrender.com/registerUserDetails", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

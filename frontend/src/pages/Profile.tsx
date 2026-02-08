@@ -7,7 +7,7 @@ import { RandomAvatar } from "react-random-avatars";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import MarkdownEditor from "@/components/ui/markdown-editor";
 import Snackbar, { type SnackbarNotice } from "@/components/ui/snackbar";
 import TemplateItem from "@/components/templates/TemplateItem";
@@ -63,7 +63,7 @@ export default function Profile() {
       try {
         setLoading(true);
         const response = await fetch(
-          `http://localhost:8080/getUserProfile?username=${encodeURIComponent(safeUsername)}`,
+          `https://bp-hub-render-service.onrender.com/getUserProfile?username=${encodeURIComponent(safeUsername)}`,
           { signal: controller.signal },
         );
         if (!response.ok) {
@@ -97,7 +97,7 @@ export default function Profile() {
 
     const controller = new AbortController();
 
-    fetch(`http://localhost:8080/getUserTemplates?username=${encodeURIComponent(safeUsername)}`, {
+    fetch(`https://bp-hub-render-service.onrender.com/getUserTemplates?username=${encodeURIComponent(safeUsername)}`, {
       signal: controller.signal,
     })
       .then((response) => response.json())
@@ -116,7 +116,7 @@ export default function Profile() {
       return;
     }
 
-    fetch("http://localhost:8080/userStatus", {
+    fetch("https://bp-hub-render-service.onrender.com/userStatus", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -159,7 +159,7 @@ export default function Profile() {
 
     setIsSaving(true);
     try {
-      const response = await fetch("http://localhost:8080/updateUserProfile", {
+      const response = await fetch("https://bp-hub-render-service.onrender.com/updateUserProfile", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

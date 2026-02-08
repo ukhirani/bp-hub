@@ -157,7 +157,7 @@ export default function AddTemplate() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("http://localhost:8080/addTemplate", {
+      const response = await fetch("https://bp-hub-render-service.onrender.com/addTemplate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
