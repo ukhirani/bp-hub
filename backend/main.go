@@ -14,6 +14,7 @@ import (
 
 	"github.com/ukhirani/bp-hub/backend/api/auth"
 	"github.com/ukhirani/bp-hub/backend/api/templates"
+	"github.com/ukhirani/bp-hub/backend/api/users"
 )
 
 func main() {
@@ -62,8 +63,16 @@ func main() {
 	defer client.Close() // Close the client when main exits
 	fmt.Println("Firestore client obtained.")
 
+	authClient, err := app.Auth(ctx)
+	if err != nil {
+		log.Fatalf("Error getting Firebase Auth client: %v\n", err)
+	}
+
 	http.HandleFunc("/login", auth.LoginHandler(client, ctx))
 	http.HandleFunc("/signup", auth.SignupHandler(client, ctx))
+	http.HandleFunc("/registerUserDetails", users.RegisterUserDetailsHandler(client, authClient, ctx))
+	http.HandleFunc("/checkUsername", users.CheckUsernameHandler(client, authClient, ctx))
+	http.HandleFunc("/userStatus", users.UserStatusHandler(client, authClient, ctx))
 	http.HandleFunc("/getTemplates", templates.GetTemplatesHandler(client, ctx))
 	http.HandleFunc("/addTemplate", templates.AddTemplateHandler(client, ctx))
 	http.HandleFunc("/setTemplate", templates.SetTemplateHandler(client, ctx))
