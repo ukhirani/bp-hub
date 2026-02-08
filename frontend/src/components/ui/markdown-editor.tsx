@@ -58,7 +58,7 @@ export default function MarkdownEditor({
           placeholder="Write something about yourself. Markdown supported."
         />
       ) : (
-        <div className="space-y-3 px-3 py-3 text-sm text-gray-200">
+        <div className="markdown-content px-3 py-3 text-sm text-gray-200">
           <ReactMarkdown remarkPlugins={[remarkGfm]}>{value || "_Nothing yet._"}</ReactMarkdown>
         </div>
       )}

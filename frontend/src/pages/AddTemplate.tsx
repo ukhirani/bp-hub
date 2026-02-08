@@ -48,6 +48,15 @@ export default function AddTemplate() {
     }
   }, [token, navigate]);
 
+  useEffect(() => {
+    if (templateType === "dir") {
+      setFileName("");
+      setCode("");
+    } else {
+      setGithubLink("");
+    }
+  }, [templateType]);
+
   const normalizedTags = useMemo(() => tags.map((tag) => tag.toLowerCase()), [tags]);
 
   const handleAddTags = (value: string) => {
@@ -128,7 +137,7 @@ export default function AddTemplate() {
       if (!githubLink.trim().startsWith("http")) {
         setNotice({
           title: "GitHub link required",
-          message: "Add a valid repository URL.",
+          message: "Upload a file to continue.",
           tone: "warning",
         });
         return false;

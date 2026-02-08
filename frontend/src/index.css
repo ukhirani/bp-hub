@@ -129,3 +129,68 @@
   height: auto; /* Maintains aspect ratio */
   object-fit: cover; /* Ensures the image covers the area without distortion */
 }
+
+.markdown-content {
+  line-height: 1.6;
+}
+
+.markdown-content h1 {
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 600;
+  margin: 0 0 0.75rem;
+}
+
+.markdown-content h2 {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+  margin: 0.75rem 0 0.5rem;
+}
+
+.markdown-content h3 {
+  font-size: 1.125rem;
+  line-height: 1.5rem;
+  font-weight: 600;
+  margin: 0.75rem 0 0.5rem;
+}
+
+.markdown-content p {
+  margin: 0 0 0.75rem;
+}
+
+.markdown-content ul,
+.markdown-content ol {
+  margin: 0 0 0.75rem 1.25rem;
+  padding: 0;
+}
+
+.markdown-content li {
+  margin: 0.25rem 0;
+}
+
+.markdown-content a {
+  color: #60a5fa;
+}
+
+.markdown-content a:hover {
+  text-decoration: underline;
+}
+
+.markdown-content code {
+  background: rgba(148, 163, 184, 0.15);
+  padding: 0.1rem 0.3rem;
+  border-radius: 0.25rem;
+}
+
+.markdown-content pre {
+  background: #0b0d12;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+}
+
+.markdown-content pre code {
+  background: transparent;
+  padding: 0;
+}

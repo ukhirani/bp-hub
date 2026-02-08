@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import {
-  Star,
-  GitFork,
   Copy,
   Check,
   FileCode,
@@ -181,6 +179,7 @@ export default function TemplateDetail() {
   }
 
   const primaryTag = template.Tags?.[0];
+  const usageCommand = `bp clone ${template.Username}/${template.TemplateName} --alias <alias-name>`;
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
@@ -194,11 +193,11 @@ export default function TemplateDetail() {
       {/* </Link> */}
 
       {/* Header */}
-      <div className="border-b border-gray-800 pb-6 mb-6">
+      <div className="border-b border-gray-800 pb-4 mb-4">
         {/* Title row */}
-        <div className="flex items-start justify-between flex-wrap gap-4">
+        <div className="flex items-start justify-between flex-wrap gap-3">
           <div>
-            <div className="flex items-center gap-2 text-xl sm:text-2xl">
+            <div className="flex items-center gap-2 flex-wrap text-lg sm:text-xl">
               <span className="text-blue-400 font-medium">
                 {template.Username}
               </span>
@@ -206,11 +205,7 @@ export default function TemplateDetail() {
               <span className="text-blue-400 font-semibold">
                 {template.TemplateName}
               </span>
-            </div>
-
-            {/* Type badge */}
-            <div className="flex items-center gap-2 mt-2">
-              <span className="px-2.5 py-0.5 text-xs font-medium text-gray-400 border border-gray-700 rounded-full">
+              <span className="px-2 py-0.5 text-[11px] font-medium text-gray-400 border border-gray-700 rounded-full">
                 {template.Type}
               </span>
               {template.GithubRepoLink && (
@@ -227,49 +222,30 @@ export default function TemplateDetail() {
             </div>
           </div>
 
-          {/* Stats */}
-          <div className="flex items-center gap-4">
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-300 border border-gray-700 rounded-md hover:bg-gray-800 transition-colors">
-              <Star className="w-4 h-4" />
-              <span>Star</span>
-              <span className="ml-1 px-1.5 py-0.5 text-xs bg-gray-800 rounded-xl">
-                {template.Stars}
-              </span>
-            </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-300 border border-gray-700 rounded-md hover:bg-gray-800 transition-colors">
-              <GitFork className="w-4 h-4" />
-              <span>Fork</span>
-              <span className="ml-1 px-1.5 py-0.5 text-xs bg-gray-800 rounded-xl">
-                {template.Clones}
-              </span>
-            </button>
-          </div>
+          {template.Tags && template.Tags.length > 0 && (
+            <div className="flex items-center gap-2 flex-wrap">
+              {template.Tags.map((tag, index) => (
+                <span
+                  key={index}
+                  className="inline-flex items-center gap-1.5 px-2 py-0.5 text-[11px] font-medium text-blue-400 bg-blue-500/10 border border-blue-500/30 rounded-full hover:bg-blue-500/20 transition-colors cursor-pointer"
+                >
+                  {index === 0 && (
+                    <span className={`w-2 h-2 rounded-full ${getTagColor(tag)}`} />
+                  )}
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Description */}
         {template.Description && (
-          <p className="mt-4 text-gray-400">{template.Description}</p>
-        )}
-
-        {/* Tags */}
-        {template.Tags && template.Tags.length > 0 && (
-          <div className="flex items-center gap-2 mt-4 flex-wrap">
-            {template.Tags.map((tag, index) => (
-              <span
-                key={index}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-blue-400 bg-blue-500/10 border border-blue-500/30 rounded-full hover:bg-blue-500/20 transition-colors cursor-pointer"
-              >
-                {index === 0 && (
-                  <span className={`w-2 h-2 rounded-full ${getTagColor(tag)}`} />
-                )}
-                {tag}
-              </span>
-            ))}
-          </div>
+          <p className="mt-3 text-sm text-gray-400">{template.Description}</p>
         )}
 
         {/* Meta info */}
-        <div className="flex items-center gap-4 mt-4 text-sm text-gray-500">
+        <div className="flex items-center gap-4 mt-3 text-xs text-gray-500">
           <span>Created {formatRelativeTime(template.CreatedAt)}</span>
           <span>Updated {formatRelativeTime(template.UpdatedAt)}</span>
         </div>
@@ -278,15 +254,13 @@ export default function TemplateDetail() {
       {/* Content sections */}
       <div className="space-y-8">
         {/* Usage section */}
-        {template.Usage && (
-          <section>
-            <h2 className="flex items-center gap-2 text-lg font-semibold text-white mb-4">
-              <Terminal className="w-5 h-5" />
-              Usage
-            </h2>
-            <CodeBlock code={template.Usage} title="Quick start" />
-          </section>
-        )}
+        <section>
+          <h2 className="flex items-center gap-2 text-lg font-semibold text-white mb-4">
+            <Terminal className="w-5 h-5" />
+            Usage
+          </h2>
+          <CodeBlock code={usageCommand} title="Quick start" />
+        </section>
 
         {/* Pre-commands */}
         {template.PreCmds && template.PreCmds.length > 0 && (

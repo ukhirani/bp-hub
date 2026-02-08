@@ -83,7 +83,7 @@ export default function TemplateItem({ template }: TemplateItemProps) {
               <span
                 className={`w-3 h-3 rounded-full ${getTagColor(primaryTag)}`}
               />
-              <span className="capitalize">{primaryTag}</span>
+              <span className="lowercase">{primaryTag}</span>
             </div>
           )}
 

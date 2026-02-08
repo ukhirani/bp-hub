@@ -1,9 +1,10 @@
 import { useNavigate } from "react-router-dom";
-import { Plus, X } from "lucide-react";
+import { LogOut, Plus, UserRound, X } from "lucide-react";
 import { useNavigation } from "@/context/NavigationContext";
 import bpLogo from "@/assets/white.png";
 import { useEffect, useState } from "react";
 import useToken from "../../../hooks/useToken";
+import { RandomAvatar } from "react-random-avatars";
 
 export default function Sidebar() {
   const {
@@ -15,8 +16,9 @@ export default function Sidebar() {
     teams,
   } = useNavigation();
   const navigate = useNavigate();
-  const { token } = useToken();
+  const { token, clearToken } = useToken();
   const [username, setUsername] = useState("User");
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     if (!token) return;
@@ -48,6 +50,12 @@ export default function Sidebar() {
     setActiveNav(item.name);
     navigate(item.path);
     setSidebarOpen(false);
+  };
+
+  const handleLogout = () => {
+    clearToken();
+    setMenuOpen(false);
+    navigate("/login", { replace: true });
   };
 
   return (
@@ -136,15 +144,36 @@ export default function Sidebar() {
         </div>
 
         {/* User profile */}
-        <div className="p-4 border-t border-gray-800 flex-shrink-0">
-          <button className="w-full flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-gray-800/50 transition-colors cursor-pointer">
-            <img
-              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face"
-              alt="User avatar"
-              className="w-8 h-8 rounded-full"
-            />
+        <div className="p-4 border-t border-gray-800 flex-shrink-0 relative">
+          <button
+            onClick={() => setMenuOpen((open) => !open)}
+            className="w-full flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-gray-800/50 transition-colors cursor-pointer"
+          >
+            <RandomAvatar key={username} name={username} size={32} />
             <span className="text-sm font-medium text-white">{username}</span>
           </button>
+
+          {menuOpen && (
+            <div className="absolute bottom-14 left-4 w-48 rounded-lg border border-gray-800 bg-[#0f1117] shadow-lg overflow-hidden flex flex-col">
+              <button
+                onClick={() => {
+                  setMenuOpen(false);
+                  navigate(`/profile/${username}`);
+                }}
+                className="w-full flex items-center gap-2 px-3 py-2 text-sm leading-5 text-left text-gray-200 hover:bg-gray-800"
+              >
+                <UserRound className="h-4 w-4" />
+                View profile
+              </button>
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center gap-2 px-3 py-2 text-sm leading-5 text-left text-red-300 hover:bg-gray-800"
+              >
+                <LogOut className="h-4 w-4" />
+                Logout
+              </button>
+            </div>
+          )}
         </div>
       </aside>
     </>

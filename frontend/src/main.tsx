@@ -11,7 +11,6 @@ import NotFound from "./pages/NotFound.tsx";
 import TemplateDetail from "./pages/TemplateDetail.tsx";
 import AddTemplate from "./pages/AddTemplate.tsx";
 import DashboardLayout from "./components/layout/DashboardLayout.tsx";
-import { authLoader } from "../auth/authloader.ts";
 
 import "./index.css";
 
@@ -45,8 +44,7 @@ const router = createBrowserRouter([
         element: <AddTemplate />,
       },
       {
-        path: "profile/:id?",
-        loader: authLoader,
+        path: "profile/:username",
         element: <Profile />,
       },
       {
