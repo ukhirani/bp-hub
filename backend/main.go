@@ -74,7 +74,7 @@ func main() {
 	http.HandleFunc("/checkUsername", users.CheckUsernameHandler(client, authClient, ctx))
 	http.HandleFunc("/userStatus", users.UserStatusHandler(client, authClient, ctx))
 	http.HandleFunc("/getTemplates", templates.GetTemplatesHandler(client, ctx))
-	http.HandleFunc("/addTemplate", templates.AddTemplateHandler(client, ctx))
+	http.HandleFunc("/addTemplate", templates.AddTemplateHandler(client, authClient, ctx))
 	http.HandleFunc("/setTemplate", templates.SetTemplateHandler(client, ctx))
 
 	fmt.Println("Listening server on :8080...")

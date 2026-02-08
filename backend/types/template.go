@@ -17,6 +17,7 @@ type Template struct {
 	TemplateName       string       `json:"template_name"`
 	Type               TemplateType `json:"type"`
 	GithubRepoLink     string       `json:"github_repo_link,omitempty"`
+	FileName           string       `json:"file_name,omitempty"`
 	PreCmds            []Cmd        `json:"pre_cmds"`
 	PostCmds           []Cmd        `json:"post_cmds"`
 	Tags               []string     `json:"tags"`

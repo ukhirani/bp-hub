@@ -27,9 +27,10 @@ type UserStatusResponse struct {
 }
 
 type UserProfile struct {
-	Username           string `json:"username" firestore:"username"`
-	UID                string `json:"uid" firestore:"uid"`
-	GithubLink         string `json:"github_link" firestore:"github_link"`
-	ProfileDescription string `json:"profile_description" firestore:"profile_description"`
-	CreatedAt          int64  `json:"created_at" firestore:"created_at"`
+	Username           string            `json:"username" firestore:"username"`
+	UID                string            `json:"uid" firestore:"uid"`
+	GithubLink         string            `json:"github_link" firestore:"github_link"`
+	ProfileDescription string            `json:"profile_description" firestore:"profile_description"`
+	Templates          map[string]string `json:"templates" firestore:"templates"`
+	CreatedAt          int64             `json:"created_at" firestore:"created_at"`
 }

@@ -94,6 +94,7 @@ func RegisterUserDetailsHandler(client *firestore.Client, authClient *auth.Clien
 			UID:                uid,
 			GithubLink:         req.GithubLink,
 			ProfileDescription: req.ProfileDescription,
+			Templates:          map[string]string{},
 			CreatedAt:          time.Now().Unix(),
 		}
 
