@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { ChevronDown, UploadCloud, Plus, X } from "lucide-react";
+import { ChevronDown, UploadCloud, X } from "lucide-react";
+// import { Plus} from "lucide-react";
+
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -371,7 +373,7 @@ export default function AddTemplate() {
                 Cancel
               </Button>
               <Button type="submit" disabled={isSubmitting}>
-                <Plus className="mr-2 h-4 w-4" />
+                {/* <Plus className="mr-2 h-4 w-4" /> */}
                 Create template
               </Button>
             </div>
