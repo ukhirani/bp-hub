@@ -2,6 +2,8 @@ import { useNavigate } from "react-router-dom";
 import { X } from "lucide-react";
 import { useNavigation } from "@/context/NavigationContext";
 import bpLogo from "@/assets/white.png";
+import { useEffect, useState } from "react";
+import useToken from "../../../hooks/useToken";
 
 export default function Sidebar() {
   const {
@@ -13,6 +15,34 @@ export default function Sidebar() {
     teams,
   } = useNavigation();
   const navigate = useNavigate();
+  const { token } = useToken();
+  const [username, setUsername] = useState("User");
+
+  useEffect(() => {
+    if (!token) return;
+
+    const controller = new AbortController();
+
+    fetch("http://localhost:8080/userStatus", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ idToken: token }),
+      signal: controller.signal,
+    })
+      .then((response) => response.json())
+      .then((data: { hasProfile?: boolean; username?: string }) => {
+        if (data?.username) {
+          setUsername(data.username);
+        }
+      })
+      .catch(() => {
+        // Keep default username on failure.
+      });
+
+    return () => controller.abort();
+  }, [token]);
 
   const handleNavClick = (item: { name: string; path: string }) => {
     setActiveNav(item.name);
@@ -103,7 +133,7 @@ export default function Sidebar() {
               alt="User avatar"
               className="w-8 h-8 rounded-full"
             />
-            <span className="text-sm font-medium text-white">Umang Hirani</span>
+            <span className="text-sm font-medium text-white">{username}</span>
           </button>
         </div>
       </aside>

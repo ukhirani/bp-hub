@@ -36,6 +36,11 @@ type AuthErrorResponse = {
   };
 };
 
+type UserStatusResponse = {
+  hasProfile: boolean;
+  username?: string;
+};
+
 function mapAuthError(code: string): SnackbarNotice {
   switch (code) {
     case "EMAIL_NOT_VERIFIED":
@@ -97,6 +102,28 @@ async function loginUser(credentials: Credentials) {
   return data as AuthSuccessResponse;
 }
 
+async function fetchUserStatus(idToken: string) {
+  const response = await fetch("http://localhost:8080/userStatus", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ idToken }),
+  });
+
+  const data = (await response.json().catch(() => ({}))) as
+    | UserStatusResponse
+    | AuthErrorResponse;
+
+  if (!response.ok) {
+    const message =
+      (data as AuthErrorResponse)?.error?.message ?? "USER_STATUS_FAILED";
+    throw new Error(message);
+  }
+
+  return data as UserStatusResponse;
+}
+
 export default function Login({
   className,
   ...props
@@ -125,13 +152,21 @@ export default function Login({
     try {
       const auth = await loginUser({ email, password });
       setToken({ token: auth.idToken });
-      const displayName = auth.email?.split("@")[0] ?? "there";
-      const welcomeNotice = {
-        title: `Welcome back, ${displayName}`,
-        message: "You are signed in and ready to go.",
-        tone: "success",
-      };
-      sessionStorage.setItem("app_notice", JSON.stringify(welcomeNotice));
+      const status = await fetchUserStatus(auth.idToken);
+      if (!status.hasProfile) {
+        navigate("/onboarding", { replace: true });
+        return;
+      }
+
+      const username = status.username ?? auth.email?.split("@")[0] ?? "there";
+      sessionStorage.setItem(
+        "app_notice",
+        JSON.stringify({
+          title: `Welcome back, ${username}`,
+          message: "You are signed in and ready to go.",
+          tone: "success",
+        }),
+      );
       navigate("/", { replace: true });
     } catch (err) {
       const code = err instanceof Error ? err.message : "LOGIN_FAILED";
