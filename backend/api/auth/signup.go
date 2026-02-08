@@ -13,7 +13,7 @@ import (
 	"github.com/ukhirani/bp-hub/backend/utils"
 )
 
-func LoginHandler(client *firestore.Client, ctx context.Context) http.HandlerFunc {
+func SignupHandler(client *firestore.Client, ctx context.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		utils.ConfigureHeader(w)
 		if r.Method == http.MethodOptions {
@@ -52,7 +52,7 @@ func LoginHandler(client *firestore.Client, ctx context.Context) http.HandlerFun
 			ReturnSecureToken: true,
 		}
 
-		authResp, authErr, statusCode, err := callFirebaseAuth(ctx, apiKey, "accounts:signInWithPassword", payload)
+		authResp, authErr, statusCode, err := callFirebaseAuth(ctx, apiKey, "accounts:signUp", payload)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			_ = json.NewEncoder(w).Encode(types.AuthErrorResponse{Error: types.AuthErrorDetail{Message: "AUTH_SERVICE_ERROR"}})
@@ -65,35 +65,17 @@ func LoginHandler(client *firestore.Client, ctx context.Context) http.HandlerFun
 			return
 		}
 
-		lookupResp, lookupErr, lookupStatus, err := callFirebaseAuthLookup(ctx, apiKey, types.FirebaseLookupRequest{IDToken: authResp.IDToken})
-		if err != nil {
+		oobErr, _, err := callFirebaseAuthOob(ctx, apiKey, types.FirebaseOobRequest{
+			RequestType: "VERIFY_EMAIL",
+			IDToken:     authResp.IDToken,
+		})
+		if err != nil || oobErr != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			_ = json.NewEncoder(w).Encode(types.AuthErrorResponse{Error: types.AuthErrorDetail{Message: "AUTH_LOOKUP_ERROR"}})
+			_ = json.NewEncoder(w).Encode(types.AuthErrorResponse{Error: types.AuthErrorDetail{Message: "VERIFICATION_EMAIL_FAILED"}})
 			return
 		}
 
-		if lookupErr != nil {
-			w.WriteHeader(lookupStatus)
-			_ = json.NewEncoder(w).Encode(lookupErr)
-			return
-		}
-
-		verified := false
-		if len(lookupResp.Users) > 0 {
-			verified = lookupResp.Users[0].EmailVerified
-		}
-
-		if !verified {
-			_, _, _ = callFirebaseAuthOob(ctx, apiKey, types.FirebaseOobRequest{
-				RequestType: "VERIFY_EMAIL",
-				IDToken:     authResp.IDToken,
-			})
-			w.WriteHeader(http.StatusForbidden)
-			_ = json.NewEncoder(w).Encode(types.AuthErrorResponse{Error: types.AuthErrorDetail{Message: "EMAIL_NOT_VERIFIED"}})
-			return
-		}
-
-		if err := json.NewEncoder(w).Encode(authResp); err != nil {
+		if err := json.NewEncoder(w).Encode(types.AuthStatusResponse{Status: "VERIFICATION_EMAIL_SENT", Email: req.Email}); err != nil {
 			fmt.Println("error encoding response to writer : ", err)
 		}
 	}
