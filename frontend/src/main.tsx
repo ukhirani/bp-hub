@@ -9,6 +9,7 @@ import Home from "./pages/Home.tsx";
 import Profile from "./pages/Profile.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import TemplateDetail from "./pages/TemplateDetail.tsx";
+import AddTemplate from "./pages/AddTemplate.tsx";
 import DashboardLayout from "./components/layout/DashboardLayout.tsx";
 import { authLoader } from "../auth/authloader.ts";
 
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
       {
         path: "templates/:username/:templateName",
         element: <TemplateDetail />,
+      },
+      {
+        path: "templates/new",
+        element: <AddTemplate />,
       },
       {
         path: "profile/:id?",

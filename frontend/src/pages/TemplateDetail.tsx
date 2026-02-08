@@ -247,33 +247,29 @@ export default function TemplateDetail() {
         </div>
 
         {/* Description */}
-        <p className="mt-4 text-gray-400">{template.Description}</p>
+        {template.Description && (
+          <p className="mt-4 text-gray-400">{template.Description}</p>
+        )}
 
         {/* Tags */}
-        <div className="flex items-center gap-2 mt-4 flex-wrap">
-          {template.Tags?.map((tag, index) => (
-            <span
-              key={index}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-blue-400 bg-blue-500/10 border border-blue-500/30 rounded-full hover:bg-blue-500/20 transition-colors cursor-pointer"
-            >
-              {index === 0 && (
-                <span className={`w-2 h-2 rounded-full ${getTagColor(tag)}`} />
-              )}
-              {tag}
-            </span>
-          ))}
-        </div>
+        {template.Tags && template.Tags.length > 0 && (
+          <div className="flex items-center gap-2 mt-4 flex-wrap">
+            {template.Tags.map((tag, index) => (
+              <span
+                key={index}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-blue-400 bg-blue-500/10 border border-blue-500/30 rounded-full hover:bg-blue-500/20 transition-colors cursor-pointer"
+              >
+                {index === 0 && (
+                  <span className={`w-2 h-2 rounded-full ${getTagColor(tag)}`} />
+                )}
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
 
         {/* Meta info */}
         <div className="flex items-center gap-4 mt-4 text-sm text-gray-500">
-          {primaryTag && (
-            <div className="flex items-center gap-1.5">
-              <span
-                className={`w-3 h-3 rounded-full ${getTagColor(primaryTag)}`}
-              />
-              <span className="capitalize">{primaryTag}</span>
-            </div>
-          )}
           <span>Created {formatRelativeTime(template.CreatedAt)}</span>
           <span>Updated {formatRelativeTime(template.UpdatedAt)}</span>
         </div>
@@ -321,7 +317,7 @@ export default function TemplateDetail() {
         )}
 
         {/* Code section */}
-        {template.Code && (
+        {template.Type === "file" && template.Code && (
           <section>
             <h2 className="flex items-center gap-2 text-lg font-semibold text-white mb-4">
               <FileCode className="w-5 h-5" />
@@ -330,8 +326,26 @@ export default function TemplateDetail() {
             <CodeBlock
               code={template.Code}
               language={primaryTag}
-              title={`main.${primaryTag || "txt"}`}
+              title={template.FileName || `main.${primaryTag || "txt"}`}
             />
+          </section>
+        )}
+
+        {/* Repo section */}
+        {template.Type === "dir" && template.GithubRepoLink && (
+          <section>
+            <h2 className="flex items-center gap-2 text-lg font-semibold text-white mb-4">
+              <ExternalLink className="w-5 h-5" />
+              Repository
+            </h2>
+            <a
+              href={template.GithubRepoLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-blue-400 hover:underline break-all"
+            >
+              {template.GithubRepoLink}
+            </a>
           </section>
         )}
 

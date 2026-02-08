@@ -6,6 +6,7 @@ export interface Template {
   TemplateName: string;
   Type: TemplateType;
   GithubRepoLink?: string;
+  FileName?: string;
   PreCmds: string[];
   PostCmds: string[];
   Tags: string[];
