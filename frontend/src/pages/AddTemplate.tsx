@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
 import Snackbar, { type SnackbarNotice } from "@/components/ui/snackbar";
 
-import useToken from "../../hooks/useToken";
+import { useAuth } from "@/context/AuthContext";
 
 type TemplateType = "file" | "dir";
 
@@ -28,7 +28,7 @@ type AuthErrorResponse = {
 const tagSeparator = /[\s,]+/;
 
 export default function AddTemplate() {
-  const { token } = useToken();
+  const { token } = useAuth();
   const navigate = useNavigate();
 
   const [templateName, setTemplateName] = useState("");

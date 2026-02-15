@@ -15,7 +15,7 @@ import Snackbar, { type SnackbarNotice } from "@/components/ui/snackbar";
 import { useEffect, useState, type FormEvent } from "react";
 import "./Login.css";
 import { Link, useNavigate } from "react-router-dom";
-import useToken from "../../hooks/useToken";
+import { useAuth } from "@/context/AuthContext";
 
 type Credentials = {
   email: string;
@@ -128,7 +128,7 @@ export default function Login({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const { token, setToken } = useToken();
+  const { token, setToken, setUsername: setAuthUsername } = useAuth();
   const navigate = useNavigate();
 
   // If the user is already authenticated, send them to the landing page.
@@ -159,6 +159,7 @@ export default function Login({
       }
 
       const username = status.username ?? auth.email?.split("@")[0] ?? "there";
+      setAuthUsername(username);
       sessionStorage.setItem(
         "app_notice",
         JSON.stringify({

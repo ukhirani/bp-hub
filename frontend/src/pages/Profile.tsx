@@ -13,7 +13,7 @@ import Snackbar, { type SnackbarNotice } from "@/components/ui/snackbar";
 import TemplateItem from "@/components/templates/TemplateItem";
 import type { Template } from "@/types/Template";
 
-import useToken from "../../hooks/useToken";
+import { useAuth } from "@/context/AuthContext";
 
 type UserProfile = {
   username: string;
@@ -34,7 +34,7 @@ function isAbortError(error: unknown): boolean {
 
 export default function Profile() {
   const { username } = useParams<{ username: string }>();
-  const { token } = useToken();
+  const { token, username: authUsername } = useAuth();
   const navigate = useNavigate();
 
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -45,12 +45,11 @@ export default function Profile() {
   const [githubLink, setGithubLink] = useState("");
   const [profileDescription, setProfileDescription] = useState("");
   const [isSaving, setIsSaving] = useState(false);
-  const [viewerUsername, setViewerUsername] = useState<string | null>(null);
 
   const isOwner = useMemo(() => {
-    if (!viewerUsername || !profile?.username) return false;
-    return viewerUsername === profile.username;
-  }, [viewerUsername, profile]);
+    if (!authUsername || !profile?.username) return false;
+    return authUsername === profile.username;
+  }, [authUsername, profile]);
 
   useEffect(() => {
     if (!username) return;
@@ -109,28 +108,6 @@ export default function Profile() {
 
     return () => controller.abort();
   }, [username]);
-
-  useEffect(() => {
-    if (!token) {
-      setViewerUsername(null);
-      return;
-    }
-
-    fetch("https://bp-hub-render-service.onrender.com/userStatus", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ idToken: token }),
-    })
-      .then((response) => response.json())
-      .then((data: { username?: string }) => {
-        if (data?.username) setViewerUsername(data.username);
-      })
-      .catch(() => {
-        setViewerUsername(null);
-      });
-  }, [token]);
 
   const handleSave = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();

@@ -10,7 +10,7 @@ import { Field, FieldDescription, FieldGroup, FieldLabel } from "../components/u
 import MarkdownEditor from "@/components/ui/markdown-editor";
 import Snackbar, { type SnackbarNotice } from "@/components/ui/snackbar";
 
-import useToken from "../../hooks/useToken";
+import { useAuth } from "@/context/AuthContext";
 
 type AuthErrorResponse = {
   error?: {
@@ -111,7 +111,7 @@ async function registerUserDetails(
 }
 
 export default function Onboarding() {
-  const { token } = useToken();
+  const { token, setUsername: setAuthUsername } = useAuth();
   const navigate = useNavigate();
 
   const [username, setUsername] = useState("");
@@ -234,6 +234,7 @@ export default function Onboarding() {
         profileDescription,
       );
 
+      setAuthUsername(result.username);
       sessionStorage.setItem(
         "app_notice",
         JSON.stringify({

@@ -11,6 +11,7 @@ import NotFound from "./pages/NotFound.tsx";
 import TemplateDetail from "./pages/TemplateDetail.tsx";
 import AddTemplate from "./pages/AddTemplate.tsx";
 import DashboardLayout from "./components/layout/DashboardLayout.tsx";
+import { AuthProvider } from "./context/AuthContext.tsx";
 
 import "./index.css";
 
@@ -77,6 +78,8 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
   </StrictMode>,
 );

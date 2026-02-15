@@ -2,7 +2,7 @@ import { Outlet } from "react-router-dom";
 import { Menu, Search } from "lucide-react";
 import Sidebar from "./Sidebar";
 import { NavigationProvider, useNavigation } from "@/context/NavigationContext";
-import useToken from "../../../hooks/useToken";
+import { useAuth } from "@/context/AuthContext";
 import LandingPage from "@/pages/LandingPage";
 import { useEffect, useState } from "react";
 import Snackbar, { type SnackbarNotice } from "@/components/ui/snackbar";
@@ -51,7 +51,7 @@ function DashboardContent() {
 }
 
 export default function DashboardLayout() {
-  const { token } = useToken();
+  const { token } = useAuth();
   const [notice, setNotice] = useState<SnackbarNotice | null>(null);
 
   useEffect(() => {

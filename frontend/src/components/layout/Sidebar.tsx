@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { LogOut, Plus, UserRound, X } from "lucide-react";
 import { useNavigation } from "@/context/NavigationContext";
+import { useAuth } from "@/context/AuthContext";
 import bpLogo from "@/assets/white.png";
-import { useEffect, useState } from "react";
-import useToken from "../../../hooks/useToken";
+import { useState } from "react";
 import { RandomAvatar } from "react-random-avatars";
 
 export default function Sidebar() {
@@ -15,35 +15,8 @@ export default function Sidebar() {
     navItems,
   } = useNavigation();
   const navigate = useNavigate();
-  const { token, clearToken } = useToken();
-  const [username, setUsername] = useState("User");
+  const { username, isLoading, clearToken } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
-
-  useEffect(() => {
-    if (!token) return;
-
-    const controller = new AbortController();
-
-    fetch("https://bp-hub-render-service.onrender.com/userStatus", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ idToken: token }),
-      signal: controller.signal,
-    })
-      .then((response) => response.json())
-      .then((data: { hasProfile?: boolean; username?: string }) => {
-        if (data?.username) {
-          setUsername(data.username);
-        }
-      })
-      .catch(() => {
-        // Keep default username on failure.
-      });
-
-    return () => controller.abort();
-  }, [token]);
 
   const handleNavClick = (item: { name: string; path: string }) => {
     setActiveNav(item.name);
@@ -144,34 +117,43 @@ export default function Sidebar() {
 
         {/* User profile */}
         <div className="p-4 border-t border-gray-800 flex-shrink-0 relative">
-          <button
-            onClick={() => setMenuOpen((open) => !open)}
-            className="w-full flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-gray-800/50 transition-colors cursor-pointer"
-          >
-            <RandomAvatar key={username} name={username} size={32} />
-            <span className="text-sm font-medium text-white">{username}</span>
-          </button>
-
-          {menuOpen && (
-            <div className="absolute bottom-14 left-4 w-48 rounded-lg border border-gray-800 bg-[#0f1117] shadow-lg overflow-hidden flex flex-col">
-              <button
-                onClick={() => {
-                  setMenuOpen(false);
-                  navigate(`/profile/${username}`);
-                }}
-                className="w-full flex items-center gap-2 px-3 py-2 text-sm leading-5 text-left text-gray-200 hover:bg-gray-800"
-              >
-                <UserRound className="h-4 w-4" />
-                View profile
-              </button>
-              <button
-                onClick={handleLogout}
-                className="w-full flex items-center gap-2 px-3 py-2 text-sm leading-5 text-left text-red-300 hover:bg-gray-800"
-              >
-                <LogOut className="h-4 w-4" />
-                Logout
-              </button>
+          {isLoading || !username ? (
+            <div className="flex items-center gap-3 px-2 py-2">
+              <div className="w-8 h-8 rounded-full bg-gray-700 animate-pulse" />
+              <div className="h-4 w-20 bg-gray-700 rounded animate-pulse" />
             </div>
+          ) : (
+            <>
+              <button
+                onClick={() => setMenuOpen((open) => !open)}
+                className="w-full flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-gray-800/50 transition-colors cursor-pointer"
+              >
+                <RandomAvatar key={username} name={username} size={32} />
+                <span className="text-sm font-medium text-white">{username}</span>
+              </button>
+
+              {menuOpen && (
+                <div className="absolute bottom-14 left-4 w-48 rounded-lg border border-gray-800 bg-[#0f1117] shadow-lg overflow-hidden flex flex-col">
+                  <button
+                    onClick={() => {
+                      setMenuOpen(false);
+                      navigate(`/profile/${username}`);
+                    }}
+                    className="w-full flex items-center gap-2 px-3 py-2 text-sm leading-5 text-left text-gray-200 hover:bg-gray-800"
+                  >
+                    <UserRound className="h-4 w-4" />
+                    View profile
+                  </button>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full flex items-center gap-2 px-3 py-2 text-sm leading-5 text-left text-red-300 hover:bg-gray-800"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    Logout
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </aside>
