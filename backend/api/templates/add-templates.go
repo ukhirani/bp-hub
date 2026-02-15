@@ -103,8 +103,8 @@ func AddTemplateHandler(client *firestore.Client, authClient *auth.Client, ctx c
 			Type:               templateType,
 			GithubRepoLink:     strings.TrimSpace(req.GithubRepoLink),
 			FileName:           strings.TrimSpace(req.FileName),
-			PreCmds:            []types.Cmd{},
-			PostCmds:           []types.Cmd{},
+			PreCmds:            sanitizeCmds(req.PreCmds),
+			PostCmds:           sanitizeCmds(req.PostCmds),
 			Tags:               sanitizeTags(req.Tags),
 			Code:               req.Code,
 			Stars:              0,
@@ -174,6 +174,18 @@ func sanitizeTags(tags []string) []string {
 		}
 		seen[trimmed] = true
 		cleaned = append(cleaned, trimmed)
+	}
+	return cleaned
+}
+
+func sanitizeCmds(cmds []string) []types.Cmd {
+	cleaned := make([]types.Cmd, 0, len(cmds))
+	for _, cmd := range cmds {
+		trimmed := strings.TrimSpace(cmd)
+		if trimmed == "" {
+			continue
+		}
+		cleaned = append(cleaned, types.Cmd(trimmed))
 	}
 	return cleaned
 }

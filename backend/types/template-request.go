@@ -8,6 +8,8 @@ type TemplateCreateRequest struct {
 	FileName       string   `json:"file_name"`
 	GithubRepoLink string   `json:"github_repo_link"`
 	Tags           []string `json:"tags"`
+	PreCmds        []string `json:"pre_cmds"`
+	PostCmds       []string `json:"post_cmds"`
 }
 
 type TemplateCreateResponse struct {
