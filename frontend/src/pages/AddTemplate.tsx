@@ -230,7 +230,7 @@ export default function AddTemplate() {
           tone: "success",
         }),
       );
-      navigate("/", { replace: true });
+      navigate("/home", { replace: true });
     } catch (err) {
       setNotice({
         title: "Unable to create template",
@@ -510,7 +510,7 @@ export default function AddTemplate() {
               <Button
                 type="button"
                 variant="secondary"
-                onClick={() => navigate("/", { replace: true })}
+                onClick={() => navigate("/home", { replace: true })}
               >
                 Cancel
               </Button>

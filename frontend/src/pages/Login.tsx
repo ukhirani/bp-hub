@@ -131,10 +131,10 @@ export default function Login({
   const { token, setToken, setUsername: setAuthUsername } = useAuth();
   const navigate = useNavigate();
 
-  // If the user is already authenticated, send them to the landing page.
+  // If the user is already authenticated, send them to the home page.
   useEffect(() => {
     if (token) {
-      navigate("/", { replace: true });
+      navigate("/home", { replace: true });
     }
   }, [token, navigate]);
 
@@ -168,7 +168,7 @@ export default function Login({
           tone: "success",
         }),
       );
-      navigate("/", { replace: true });
+      navigate("/home", { replace: true });
     } catch (err) {
       const code = err instanceof Error ? err.message : "LOGIN_FAILED";
       setNotice(mapAuthError(code));

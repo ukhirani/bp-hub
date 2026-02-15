@@ -136,7 +136,7 @@ export default function Onboarding() {
     fetchUserStatus(token)
       .then((status) => {
         if (status.hasProfile) {
-          navigate("/", { replace: true });
+          navigate("/home", { replace: true });
         }
       })
       .catch(() => {
@@ -243,7 +243,7 @@ export default function Onboarding() {
           tone: "success",
         }),
       );
-      navigate("/", { replace: true });
+      navigate("/home", { replace: true });
     } catch (err) {
       const code = err instanceof Error ? err.message : "USER_REGISTER_FAILED";
       const message =

@@ -10,12 +10,22 @@ import Profile from "./pages/Profile.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import TemplateDetail from "./pages/TemplateDetail.tsx";
 import AddTemplate from "./pages/AddTemplate.tsx";
+import Docs from "./pages/Docs.tsx";
+import LandingPage from "./pages/LandingPage.tsx";
 import DashboardLayout from "./components/layout/DashboardLayout.tsx";
 import { AuthProvider } from "./context/AuthContext.tsx";
 
 import "./index.css";
 
 const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <LandingPage />,
+  },
+  {
+    path: "/docs",
+    element: <Docs />,
+  },
   {
     path: "/login",
     element: <Login />,
@@ -29,7 +39,7 @@ const router = createBrowserRouter([
     element: <Onboarding />,
   },
   {
-    path: "/",
+    path: "/home",
     element: <DashboardLayout />,
     children: [
       {

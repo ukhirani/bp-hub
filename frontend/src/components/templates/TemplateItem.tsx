@@ -33,7 +33,7 @@ export default function TemplateItem({ template }: TemplateItemProps) {
   const primaryTag = template.Tags?.[0];
 
   const handleClick = () => {
-    navigate(`/templates/${template.Username}/${template.TemplateName}`);
+    navigate(`/home/templates/${template.Username}/${template.TemplateName}`);
   };
 
   return (

@@ -93,7 +93,7 @@ export default function Signup({
 
   useEffect(() => {
     if (token) {
-      navigate("/", { replace: true });
+      navigate("/home", { replace: true });
     }
   }, [token, navigate]);
 

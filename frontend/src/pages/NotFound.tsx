@@ -16,7 +16,7 @@ const NotFound = ({ children }: { children: ReactNode }) => {
                 <Button
                     variant="link"
                     className="underline cursor-pointer"
-                    onClick={() => navigate("/", { replace: true })}
+                    onClick={() => navigate("/home", { replace: true })}
                 >
                     Go to Home
                 </Button>

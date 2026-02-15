@@ -3,7 +3,7 @@ import { Menu } from "lucide-react";
 import Sidebar from "./Sidebar";
 import { NavigationProvider, useNavigation } from "@/context/NavigationContext";
 import { useAuth } from "@/context/AuthContext";
-import LandingPage from "@/pages/LandingPage";
+import { Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Snackbar, { type SnackbarNotice } from "@/components/ui/snackbar";
 
@@ -59,9 +59,9 @@ export default function DashboardLayout() {
     }
   }, []);
 
-  // Show landing page if not authenticated
+  // Redirect to landing page if not authenticated
   if (!token) {
-    return <LandingPage />;
+    return <Navigate to="/" replace />;
   }
 
   return (
