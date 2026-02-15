@@ -26,7 +26,7 @@ function InstallTabs() {
   };
 
   return (
-    <div className="mt-8 bg-[#0f1117] border border-gray-800 rounded w-full max-w-2xl">
+    <div className="mt-8 bg-[#0f1117] border border-gray-800 rounded w-full max-w-xl">
       {/* Tabs */}
       <div className="flex items-center border-b border-gray-800">
         <button
@@ -62,17 +62,10 @@ function InstallTabs() {
       </div>
 
       {/* Code snippet */}
-      <div className="p-4">
-        <div className="flex items-center gap-2 text-gray-500 text-xs mb-3">
-          <Terminal className="w-4 h-4" />
-          <span>
-            {activeTab === "mac" && "Install with Homebrew"}
-            {activeTab === "linux" && "Install with curl"}
-            {activeTab === "windows" && "Install with Go"}
-          </span>
-        </div>
+      <div className="">
+
         <div className="relative">
-          <pre className="bg-gray-900 border border-gray-800 rounded p-3 pr-24 overflow-x-auto">
+          <pre className="bg-gray-900   rounded p-3 pr-24 overflow-x-auto">
             <code className="text-sm text-gray-300 font-mono">{installCommands[activeTab]}</code>
           </pre>
           <button
@@ -112,7 +105,7 @@ const LandingPage = () => {
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <img className="h-8 w-auto" src={bpLogo} alt="Logo" />
-            <span className="text-white font-semibold hidden sm:inline">Boilerplate</span>
+            {/* <span className="text-white font-semibold hidden sm:inline">Boilerplate</span> */}
           </div>
           <div className="flex items-center gap-4">
             <Button
@@ -151,7 +144,7 @@ const LandingPage = () => {
       <section className="min-h-screen flex flex-col items-center justify-center px-6 pt-16">
         <div className="flex flex-col items-center gap-6 max-w-3xl text-center">
           <img className="h-32 w-auto object-contain" src={bpLogo} alt="Logo" />
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight">
+          <h1 className="text-xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight">
             Skip the boilerplate.
             <br />
             <span className="text-gray-500">Start building.</span>
