@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { ChevronRight, Star, GitFork } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import type { Template } from "@/types/Template";
 import { formatRelativeTime } from "@/lib/utils";
 
