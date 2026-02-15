@@ -71,9 +71,9 @@ export default function TemplateItem({ template }: TemplateItemProps) {
         </div>
 
         {/* Description */}
-        <p className="mt-2 text-sm text-gray-400 line-clamp-2 max-w-2xl">
+        {/* <p className="mt-2 text-sm text-gray-400 line-clamp-2 max-w-2xl">
           {template.Description || "No description provided"}
-        </p>
+        </p> */}
 
         {/* Meta info row */}
         <div className="flex items-center gap-4 mt-3 text-xs text-gray-500">
@@ -88,16 +88,16 @@ export default function TemplateItem({ template }: TemplateItemProps) {
           )}
 
           {/* Stars */}
-          <div className="flex items-center gap-1 hover:text-blue-400 transition-colors">
+          {/* <div className="flex items-center gap-1 hover:text-blue-400 transition-colors">
             <Star className="w-4 h-4" />
             <span>{template.Stars}</span>
-          </div>
+          </div> */}
 
           {/* Forks/Clones */}
-          <div className="flex items-center gap-1 hover:text-blue-400 transition-colors">
+          {/* <div className="flex items-center gap-1 hover:text-blue-400 transition-colors">
             <GitFork className="w-4 h-4" />
             <span>{template.Clones}</span>
-          </div>
+          </div> */}
 
           {/* Updated time */}
           <span>Updated {formatRelativeTime(template.UpdatedAt)}</span>
