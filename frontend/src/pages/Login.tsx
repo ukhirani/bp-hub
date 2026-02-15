@@ -151,7 +151,7 @@ export default function Login({
 
     try {
       const auth = await loginUser({ email, password });
-      setToken({ token: auth.idToken });
+      setToken({ token: auth.idToken, refreshToken: auth.refreshToken });
       const status = await fetchUserStatus(auth.idToken);
       if (!status.hasProfile) {
         navigate("/onboarding", { replace: true });

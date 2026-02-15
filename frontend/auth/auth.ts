@@ -7,3 +7,11 @@ export function getStoredToken(): Token {
   const userToken: UserToken = JSON.parse(tokenString);
   return userToken?.token ?? null;
 }
+
+export function getStoredRefreshToken(): string | null {
+  const tokenString = localStorage.getItem("token");
+  if (!tokenString) return null;
+
+  const userToken: UserToken = JSON.parse(tokenString);
+  return userToken?.refreshToken ?? null;
+}

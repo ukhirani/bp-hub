@@ -70,6 +70,7 @@ func main() {
 
 	http.HandleFunc("/login", auth.LoginHandler(client, ctx))
 	http.HandleFunc("/signup", auth.SignupHandler(client, ctx))
+	http.HandleFunc("/refreshToken", auth.RefreshTokenHandler(ctx))
 	http.HandleFunc("/registerUserDetails", users.RegisterUserDetailsHandler(client, authClient, ctx))
 	http.HandleFunc("/checkUsername", users.CheckUsernameHandler(client, authClient, ctx))
 	http.HandleFunc("/userStatus", users.UserStatusHandler(client, authClient, ctx))
