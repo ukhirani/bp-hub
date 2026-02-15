@@ -65,7 +65,7 @@ export default function Sidebar() {
 
         <div className="px-3 pt-4">
           <button
-            onClick={() => navigate("/templates/new")}
+            onClick={() => navigate("/home/templates/new")}
             className="w-full flex items-center justify-center gap-2 rounded-lg bg-blue-500/10 text-blue-300 border border-blue-500/30 px-3 py-2 text-sm font-medium hover:bg-blue-500/20 transition"
           >
             <Plus className="w-4 h-4" />
@@ -137,7 +137,7 @@ export default function Sidebar() {
                   <button
                     onClick={() => {
                       setMenuOpen(false);
-                      navigate(`/profile/${username}`);
+                      navigate(`/home/profile/${username}`);
                     }}
                     className="w-full flex items-center gap-2 px-3 py-2 text-sm leading-5 text-left text-gray-200 hover:bg-gray-800"
                   >

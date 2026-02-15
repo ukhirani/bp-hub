@@ -35,7 +35,7 @@ const NavigationContext = createContext<NavigationContextType | undefined>(
 
 // Navigation items
 const navItems: NavItem[] = [
-  { name: "Templates", icon: FolderKanban, path: "/" },
+  { name: "Templates", icon: FolderKanban, path: "/home" },
   // { name: "Deployments", icon: Rocket, path: "/deployments" },
   // { name: "Activity", icon: Activity, path: "/activity" },
   // { name: "Domains", icon: Globe, path: "/domains" },
