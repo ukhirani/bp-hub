@@ -1,7 +1,102 @@
 import bpLogo from "@/assets/white.png";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Terminal, Zap, Cloud, Package, ArrowRight, ChevronDown } from "lucide-react";
+import { Terminal, Zap, Cloud, Package, ArrowRight, ChevronDown, Copy, Check } from "lucide-react";
+import { useState } from "react";
+
+// Install tabs component
+function InstallTabs() {
+  const [activeTab, setActiveTab] = useState<"mac" | "linux" | "windows">("mac");
+  const [copied, setCopied] = useState(false);
+
+  const installCommands = {
+    mac: "brew tap ukhirani/bp && brew install bp",
+    linux: "curl -fsSL https://raw.githubusercontent.com/ukhirani/boilerplate/main/install.sh | sh",
+    windows: "go install github.com/ukhirani/boilerplate/bp@latest",
+  };
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(installCommands[activeTab]);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    } catch (err) {
+      console.error("Copy failed", err);
+    }
+  };
+
+  return (
+    <div className="mt-8 bg-[#0f1117] border border-gray-800 rounded w-full max-w-2xl">
+      {/* Tabs */}
+      <div className="flex items-center border-b border-gray-800">
+        <button
+          onClick={() => setActiveTab("mac")}
+          className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
+            activeTab === "mac"
+              ? "text-white border-b-2 border-blue-400 bg-gray-800/30"
+              : "text-gray-500 hover:text-gray-300"
+          }`}
+        >
+          macOS
+        </button>
+        <button
+          onClick={() => setActiveTab("linux")}
+          className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
+            activeTab === "linux"
+              ? "text-white border-b-2 border-blue-400 bg-gray-800/30"
+              : "text-gray-500 hover:text-gray-300"
+          }`}
+        >
+          Linux
+        </button>
+        <button
+          onClick={() => setActiveTab("windows")}
+          className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
+            activeTab === "windows"
+              ? "text-white border-b-2 border-blue-400 bg-gray-800/30"
+              : "text-gray-500 hover:text-gray-300"
+          }`}
+        >
+          Windows
+        </button>
+      </div>
+
+      {/* Code snippet */}
+      <div className="p-4">
+        <div className="flex items-center gap-2 text-gray-500 text-xs mb-3">
+          <Terminal className="w-4 h-4" />
+          <span>
+            {activeTab === "mac" && "Install with Homebrew"}
+            {activeTab === "linux" && "Install with curl"}
+            {activeTab === "windows" && "Install with Go"}
+          </span>
+        </div>
+        <div className="relative">
+          <pre className="bg-gray-900 border border-gray-800 rounded p-3 pr-24 overflow-x-auto">
+            <code className="text-sm text-gray-300 font-mono">{installCommands[activeTab]}</code>
+          </pre>
+          <button
+            onClick={handleCopy}
+            className="absolute right-2 top-2 inline-flex items-center gap-1.5 rounded bg-gray-800 border border-gray-700 px-2.5 py-1.5 text-xs font-medium text-gray-300 hover:bg-gray-700 hover:border-gray-600 transition-colors"
+            aria-label="Copy command"
+          >
+            {copied ? (
+              <>
+                <Check className="w-3.5 h-3.5 text-green-400" />
+                <span className="text-green-400">Copied</span>
+              </>
+            ) : (
+              <>
+                <Copy className="w-3.5 h-3.5" />
+                <span>Copy</span>
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -85,13 +180,7 @@ const LandingPage = () => {
           </div>
 
           {/* Install snippet */}
-          <div className="mt-8 bg-[#0f1117] border border-gray-800 rounded-lg p-4 w-full max-w-md">
-            <div className="flex items-center gap-2 text-gray-500 text-xs mb-2">
-              <Terminal className="w-4 h-4" />
-              <span>Install with Homebrew</span>
-            </div>
-            <code className="text-sm text-green-400">brew tap ukhirani/bp && brew install bp</code>
-          </div>
+          <InstallTabs />
         </div>
 
         {/* Scroll indicator */}

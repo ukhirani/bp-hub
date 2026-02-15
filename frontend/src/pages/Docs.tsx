@@ -94,31 +94,31 @@ function CodeBlock({ code, language = "bash" }: { code: string; language?: strin
   };
 
   return (
-    <div className="relative group my-4">
-      <pre className="relative bg-[#0a0b0f] border border-gray-800 rounded-lg p-4 overflow-x-auto">
-        <button
-          type="button"
-          onClick={handleCopy}
-          className="absolute right-2 top-2 z-10 inline-flex items-center gap-1.5 rounded-md border border-gray-600 bg-gray-800 px-2.5 py-1.5 text-xs font-medium text-white shadow-md transition-all hover:bg-gray-700 hover:border-gray-500 active:scale-95"
-          aria-label="Copy code"
-        >
-          {copied ? (
-            <>
-              <Check className="w-3.5 h-3.5 text-green-400" />
-              <span className="text-green-400">Copied!</span>
-            </>
-          ) : (
-            <>
-              <Copy className="w-3.5 h-3.5" />
-              <span>Copy</span>
-            </>
-          )}
-        </button>
+    <div className="relative my-4">
+      <pre className="bg-gray-900 border border-gray-800 rounded p-4 pr-24 overflow-x-auto">
         <code
-          className={`language-${language} text-sm leading-relaxed block pr-20`}
+          className={`language-${language} text-sm leading-relaxed block`}
           dangerouslySetInnerHTML={{ __html: highlighted }}
         />
       </pre>
+      <button
+        type="button"
+        onClick={handleCopy}
+        className="absolute right-2 top-2 inline-flex items-center gap-1.5 rounded bg-gray-800 border border-gray-700 px-2.5 py-1.5 text-xs font-medium text-gray-300 hover:bg-gray-700 hover:border-gray-600 transition-colors"
+        aria-label="Copy code"
+      >
+        {copied ? (
+          <>
+            <Check className="w-3.5 h-3.5 text-green-400" />
+            <span className="text-green-400">Copied</span>
+          </>
+        ) : (
+          <>
+            <Copy className="w-3.5 h-3.5" />
+            <span>Copy</span>
+          </>
+        )}
+      </button>
     </div>
   );
 }
@@ -156,9 +156,9 @@ function List({ items }: { items: string[] }) {
 // Feature card component
 function FeatureCard({ icon: Icon, title, description }: { icon: typeof Zap; title: string; description: string }) {
   return (
-    <div className="bg-[#0f1117] border border-gray-800 rounded-lg p-4">
+    <div className="bg-[#0f1117] border border-gray-800 rounded p-4">
       <div className="flex items-center gap-3 mb-2">
-        <div className="p-2 bg-blue-500/10 rounded-lg">
+        <div className="p-2 bg-blue-500/10 rounded border border-blue-500/20">
           <Icon className="w-5 h-5 text-blue-400" />
         </div>
         <h4 className="font-semibold text-white">{title}</h4>
@@ -213,8 +213,8 @@ export default function Docs() {
           {/* Getting Started */}
           <section id="getting-started-introduction" data-section className="mb-16">
             <div className="flex items-center gap-3 mb-6">
-              <div className="p-3 bg-blue-500/10 rounded-xl">
-                <Book className="w-8 h-8 text-blue-400" />
+              <div className="p-2 bg-blue-500/10 rounded border border-blue-500/20">
+                <Book className="w-6 h-6 text-blue-400" />
               </div>
               <div>
                 <h1 className="text-3xl font-bold text-white">Getting Started</h1>
@@ -298,8 +298,8 @@ bp gen go-starter app.go`} />
           {/* Usage */}
           <section id="usage-basic-commands" data-section className="mb-16">
             <div className="flex items-center gap-3 mb-6">
-              <div className="p-3 bg-green-500/10 rounded-xl">
-                <Terminal className="w-8 h-8 text-green-400" />
+              <div className="p-2 bg-green-500/10 rounded border border-green-500/20">
+                <Terminal className="w-6 h-6 text-green-400" />
               </div>
               <div>
                 <h1 className="text-3xl font-bold text-white">Usage</h1>
@@ -346,7 +346,7 @@ bp add main.cpp --name cpp-starter
 # Add a directory
 bp add ./my-react-app --name react-template`} />
 
-            <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 mt-4">
+            <div className="bg-blue-500/10 border border-blue-500/30 rounded p-4 mt-4">
               <p className="text-sm text-blue-300">
                 <strong>Tip:</strong> Template names should be short and memorable. Use lowercase with hyphens for multi-word names.
               </p>
@@ -407,8 +407,8 @@ bp config <template-name> -e nano`} />
           {/* BP Hub */}
           <section id="bp-hub-overview" data-section className="mb-16">
             <div className="flex items-center gap-3 mb-6">
-              <div className="p-3 bg-purple-500/10 rounded-xl">
-                <Cloud className="w-8 h-8 text-purple-400" />
+              <div className="p-2 bg-purple-500/10 rounded border border-purple-500/20">
+                <Cloud className="w-6 h-6 text-purple-400" />
               </div>
               <div>
                 <h1 className="text-3xl font-bold text-white">BP Hub</h1>
@@ -461,7 +461,7 @@ bp gen cpp-starter`} />
               linked to GitHub repositories.
             </P>
 
-            <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-4 mt-4">
+            <div className="bg-gray-800/50 border border-gray-700 rounded p-4 mt-4">
               <p className="text-sm text-gray-300">
                 Visit <a href="/" className="text-blue-400 hover:underline">bp-hub</a> to create an account and start sharing templates.
               </p>
@@ -471,8 +471,8 @@ bp gen cpp-starter`} />
           {/* Advanced */}
           <section id="advanced-pre-post-commands" data-section className="mb-16">
             <div className="flex items-center gap-3 mb-6">
-              <div className="p-3 bg-orange-500/10 rounded-xl">
-                <Settings className="w-8 h-8 text-orange-400" />
+              <div className="p-2 bg-orange-500/10 rounded border border-orange-500/20">
+                <Settings className="w-6 h-6 text-orange-400" />
               </div>
               <div>
                 <h1 className="text-3xl font-bold text-white">Advanced</h1>
@@ -573,8 +573,8 @@ PostCmd = ["npm run format"]`}
           {/* Troubleshooting */}
           <section id="troubleshooting-common-issues" data-section className="mb-16">
             <div className="flex items-center gap-3 mb-6">
-              <div className="p-3 bg-red-500/10 rounded-xl">
-                <AlertTriangle className="w-8 h-8 text-red-400" />
+              <div className="p-2 bg-red-500/10 rounded border border-red-500/20">
+                <AlertTriangle className="w-6 h-6 text-red-400" />
               </div>
               <div>
                 <h1 className="text-3xl font-bold text-white">Troubleshooting</h1>
@@ -665,7 +665,7 @@ go install github.com/ukhirani/boilerplate/bp@latest`} />
           {/* Footer */}
           <div className="border-t border-gray-800 pt-8 mt-16">
             <div className="flex items-center justify-between text-sm text-gray-500">
-              <p>Made with ❤️ for developers</p>
+              <p>Made for developers</p>
               <a
                 href="https://github.com/ukhirani/boilerplate"
                 target="_blank"
