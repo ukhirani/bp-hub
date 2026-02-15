@@ -156,10 +156,10 @@ const LandingPage = () => {
             <br />
             <span className="text-gray-500">Start building.</span>
           </h1>
-          <p className="text-lg text-gray-400 max-w-xl">
+          {/* <p className="text-lg text-gray-400 max-w-xl">
             A CLI tool that lets developers save and reuse file or project templates, 
             including automated setup commands, to quickly generate code structures.
-          </p>
+          </p> */}
           <div className="flex flex-col sm:flex-row items-center gap-4 mt-4">
             <Button
               size="lg"

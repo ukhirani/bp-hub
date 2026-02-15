@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useParams, Link } from "react-router-dom";
 import {
   Copy,
@@ -11,6 +11,22 @@ import {
 } from "lucide-react";
 import type { Template } from "@/types/Template";
 import { formatRelativeTime } from "@/lib/utils";
+import Prism from "prismjs";
+import "prismjs/themes/prism-tomorrow.css";
+import "prismjs/components/prism-javascript";
+import "prismjs/components/prism-typescript";
+import "prismjs/components/prism-jsx";
+import "prismjs/components/prism-tsx";
+import "prismjs/components/prism-python";
+import "prismjs/components/prism-java";
+import "prismjs/components/prism-go";
+import "prismjs/components/prism-rust";
+import "prismjs/components/prism-c";
+import "prismjs/components/prism-cpp";
+import "prismjs/components/prism-ruby";
+import "prismjs/components/prism-css";
+import "prismjs/components/prism-json";
+import "prismjs/components/prism-bash";
 
 // Language color mapping for tags
 const tagColors: Record<string, string> = {
@@ -33,7 +49,30 @@ function getTagColor(tag: string): string {
   return tagColors[tag.toLowerCase()] || tagColors.default;
 }
 
-// Code block component with syntax highlighting colors
+// Map language tags to Prism language identifiers
+function getPrismLanguage(lang?: string): string {
+  if (!lang) return "javascript";
+  const langMap: Record<string, string> = {
+    js: "javascript",
+    ts: "typescript",
+    py: "python",
+    rb: "ruby",
+    rs: "rust",
+    go: "go",
+    java: "java",
+    cpp: "cpp",
+    c: "c",
+    jsx: "jsx",
+    tsx: "tsx",
+    json: "json",
+    bash: "bash",
+    sh: "bash",
+    css: "css",
+  };
+  return langMap[lang.toLowerCase()] || lang.toLowerCase();
+}
+
+// Code block component with syntax highlighting
 function CodeBlock({
   code,
   language,
@@ -45,6 +84,12 @@ function CodeBlock({
 }) {
   const [copied, setCopied] = useState(false);
 
+  const highlighted = useMemo(() => {
+    const prismLang = getPrismLanguage(language);
+    const grammar = Prism.languages[prismLang] || Prism.languages.javascript;
+    return Prism.highlight(code, grammar, prismLang);
+  }, [code, language]);
+
   const handleCopy = async () => {
     await navigator.clipboard.writeText(code);
     setCopied(true);
@@ -52,7 +97,7 @@ function CodeBlock({
   };
 
   return (
-    <div className="rounded-lg border border-gray-700 overflow-hidden">
+    <div className="rounded border border-gray-700 overflow-hidden">
       {title && (
         <div className="flex items-center justify-between px-4 py-2 bg-gray-800 border-b border-gray-700">
           <div className="flex items-center gap-2">
@@ -80,10 +125,11 @@ function CodeBlock({
           </button>
         </div>
       )}
-      <pre className="p-4 bg-[#0d1117] overflow-x-auto">
-        <code className="text-sm text-gray-300 font-mono whitespace-pre">
-          {code}
-        </code>
+      <pre className="p-4 bg-gray-900 overflow-x-auto">
+        <code
+          className={`language-${getPrismLanguage(language)} text-sm leading-relaxed block`}
+          dangerouslySetInnerHTML={{ __html: highlighted }}
+        />
       </pre>
     </div>
   );
