@@ -38,6 +38,10 @@ export default function AddTemplate() {
   const [githubLink, setGithubLink] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
+  const [preCmds, setPreCmds] = useState<string[]>([]);
+  const [preCmdInput, setPreCmdInput] = useState("");
+  const [postCmds, setPostCmds] = useState<string[]>([]);
+  const [postCmdInput, setPostCmdInput] = useState("");
   const [notice, setNotice] = useState<SnackbarNotice | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -86,6 +90,34 @@ export default function AddTemplate() {
 
   const removeTag = (tag: string) => {
     setTags((prev) => prev.filter((item) => item !== tag));
+  };
+
+  const addCommand = (
+    value: string,
+    setList: React.Dispatch<React.SetStateAction<string[]>>,
+    setInput: React.Dispatch<React.SetStateAction<string>>,
+  ) => {
+    const trimmed = value.trim();
+    if (!trimmed) return;
+    setList((prev) => [...prev, trimmed]);
+    setInput("");
+  };
+
+  const handleCommandKeyDown = (
+    event: React.KeyboardEvent<HTMLInputElement>,
+    onAdd: () => void,
+  ) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      onAdd();
+    }
+  };
+
+  const removeCommand = (
+    index: number,
+    setList: React.Dispatch<React.SetStateAction<string[]>>,
+  ) => {
+    setList((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleFile = (file: File) => {
@@ -172,6 +204,8 @@ export default function AddTemplate() {
           file_name: templateType === "file" ? fileName : "",
           github_repo_link: templateType === "dir" ? githubLink : "",
           tags: normalizedTags,
+          pre_cmds: preCmds,
+          post_cmds: postCmds,
         }),
       });
 
@@ -332,6 +366,114 @@ export default function AddTemplate() {
                 />
               </Field>
             )}
+
+            <Field>
+              <FieldLabel>Pre-generation commands</FieldLabel>
+              <FieldDescription>
+                Commands to run before template generation (e.g., npm install)
+              </FieldDescription>
+              <div className="flex gap-2">
+                <Input
+                  value={preCmdInput}
+                  onChange={(event) => setPreCmdInput(event.target.value)}
+                  onKeyDown={(event) =>
+                    handleCommandKeyDown(event, () =>
+                      addCommand(preCmdInput, setPreCmds, setPreCmdInput),
+                    )
+                  }
+                  placeholder="npm install"
+                />
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() =>
+                    addCommand(preCmdInput, setPreCmds, setPreCmdInput)
+                  }
+                >
+                  Add
+                </Button>
+              </div>
+              {preCmds.length > 0 && (
+                <div className="mt-3 rounded-lg border border-gray-700 bg-[#0d1117] p-3">
+                  <div className="text-xs font-medium text-gray-400 mb-2">Preview:</div>
+                  <div className="space-y-1.5">
+                    {preCmds.map((cmd, index) => (
+                      <div
+                        key={`${cmd}-${index}`}
+                        className="flex items-center justify-between gap-2 text-sm"
+                      >
+                        <div className="flex items-center gap-2 font-mono flex-1 min-w-0">
+                          <span className="text-gray-500">$</span>
+                          <span className="text-green-400 truncate">{cmd}</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => removeCommand(index, setPreCmds)}
+                          className="text-gray-400 hover:text-white shrink-0"
+                          aria-label="Remove command"
+                        >
+                          <X className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </Field>
+
+            <Field>
+              <FieldLabel>Post-generation commands</FieldLabel>
+              <FieldDescription>
+                Commands to run after template generation (e.g., npm run build)
+              </FieldDescription>
+              <div className="flex gap-2">
+                <Input
+                  value={postCmdInput}
+                  onChange={(event) => setPostCmdInput(event.target.value)}
+                  onKeyDown={(event) =>
+                    handleCommandKeyDown(event, () =>
+                      addCommand(postCmdInput, setPostCmds, setPostCmdInput),
+                    )
+                  }
+                  placeholder="npm run build"
+                />
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() =>
+                    addCommand(postCmdInput, setPostCmds, setPostCmdInput)
+                  }
+                >
+                  Add
+                </Button>
+              </div>
+              {postCmds.length > 0 && (
+                <div className="mt-3 rounded-lg border border-gray-700 bg-[#0d1117] p-3">
+                  <div className="text-xs font-medium text-gray-400 mb-2">Preview:</div>
+                  <div className="space-y-1.5">
+                    {postCmds.map((cmd, index) => (
+                      <div
+                        key={`${cmd}-${index}`}
+                        className="flex items-center justify-between gap-2 text-sm"
+                      >
+                        <div className="flex items-center gap-2 font-mono flex-1 min-w-0">
+                          <span className="text-gray-500">$</span>
+                          <span className="text-green-400 truncate">{cmd}</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => removeCommand(index, setPostCmds)}
+                          className="text-gray-400 hover:text-white shrink-0"
+                          aria-label="Remove command"
+                        >
+                          <X className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </Field>
 
             <Field>
               <FieldLabel>Tags</FieldLabel>
