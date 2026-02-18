@@ -1,17 +1,29 @@
 import bpLogo from "@/assets/white.png";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Terminal, Zap, Cloud, Package, ArrowRight, ChevronDown, Copy, Check } from "lucide-react";
+import {
+  Terminal,
+  Zap,
+  Cloud,
+  Package,
+  ArrowRight,
+  ChevronDown,
+  Copy,
+  Check,
+} from "lucide-react";
 import { useState } from "react";
 
 // Install tabs component
 function InstallTabs() {
-  const [activeTab, setActiveTab] = useState<"mac" | "linux" | "windows">("mac");
+  const [activeTab, setActiveTab] = useState<"mac" | "linux" | "windows">(
+    "mac",
+  );
   const [copied, setCopied] = useState(false);
 
   const installCommands = {
-    mac: "brew tap ukhirani/bp && brew install bp",
-    linux: "curl -fsSL https://raw.githubusercontent.com/ukhirani/boilerplate/main/install.sh | sh",
+    mac: "brew install ukhirani/bp/bp",
+    linux:
+      "curl -fsSL https://raw.githubusercontent.com/ukhirani/boilerplate/main/install.sh | sh",
     windows: "go install github.com/ukhirani/boilerplate/bp@latest",
   };
 
@@ -63,10 +75,11 @@ function InstallTabs() {
 
       {/* Code snippet */}
       <div className="">
-
         <div className="relative">
           <pre className="bg-gray-900   rounded p-3 pr-24 overflow-x-auto">
-            <code className="text-sm text-gray-300 font-mono">{installCommands[activeTab]}</code>
+            <code className="text-sm text-gray-300 font-mono">
+              {installCommands[activeTab]}
+            </code>
           </pre>
           <button
             onClick={handleCopy}
@@ -295,7 +308,10 @@ const LandingPage = () => {
             <span className="text-gray-500 text-sm">© 2026 Boilerplate</span>
           </div>
           <div className="flex items-center gap-6 text-sm text-gray-500">
-            <button onClick={() => navigate("/docs")} className="hover:text-white transition-colors">
+            <button
+              onClick={() => navigate("/docs")}
+              className="hover:text-white transition-colors"
+            >
               Docs
             </button>
             <a
@@ -314,7 +330,15 @@ const LandingPage = () => {
 };
 
 // Feature card component
-function FeatureCard({ icon: Icon, title, description }: { icon: typeof Zap; title: string; description: string }) {
+function FeatureCard({
+  icon: Icon,
+  title,
+  description,
+}: {
+  icon: typeof Zap;
+  title: string;
+  description: string;
+}) {
   return (
     <div className="bg-[#0f1117] border border-gray-800 rounded-xl p-6 hover:border-gray-700 transition-colors">
       <div className="p-3 bg-blue-500/10 rounded-lg w-fit mb-4">
@@ -327,7 +351,17 @@ function FeatureCard({ icon: Icon, title, description }: { icon: typeof Zap; tit
 }
 
 // Step card component
-function StepCard({ step, title, command, description }: { step: string; title: string; command: string; description: string }) {
+function StepCard({
+  step,
+  title,
+  command,
+  description,
+}: {
+  step: string;
+  title: string;
+  command: string;
+  description: string;
+}) {
   return (
     <div className="text-center">
       <div className="w-10 h-10 rounded-full bg-blue-500/10 border border-blue-500/30 flex items-center justify-center mx-auto mb-4">
