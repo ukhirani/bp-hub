@@ -602,6 +602,18 @@ PreCmd = ["npm init -y"]`}
 PostCmd = ["npm install", "npm run format"]`}
               language="toml"
             />
+
+            <SubHeading>Run Commands Without Generation</SubHeading>
+            <P>
+              Use <code className="text-blue-400">bp work</code> to run template
+              pre/post commands without generating any files.
+            </P>
+            <CodeBlock
+              code={`# Run the pre and post command of any template (without generating the template)
+bp work <template> # By default runs pre and post commands both (sequentially)
+bp work <template> --pre # Runs only the pre commands
+bp work <template> --post # Runs only the post commands`}
+            />
           </section>
 
           <section
