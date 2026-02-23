@@ -301,6 +301,12 @@ export default function Docs() {
               code={`curl -fsSL https://raw.githubusercontent.com/ukhirani/boilerplate/main/install.sh | sh`}
             />
 
+            <SubHeading>Windows</SubHeading>
+            <P>Install using winget on Windows:</P>
+            <CodeBlock
+              code={`winget install Ukhirani.Bp`}
+            />
+
             <SubHeading>Using Go</SubHeading>
             <P>If you have Go installed:</P>
             <CodeBlock
@@ -775,7 +781,16 @@ chmod -R 755 ~/boilerplate/templates/`}
 brew upgrade bp
 
 # Using Go
-go install github.com/ukhirani/boilerplate/bp@latest`}
+go install github.com/ukhirani/boilerplate/bp@latest
+
+
+# Using install script
+curl -fsSL https://raw.githubusercontent.com/ukhirani/boilerplate/main/install.sh | sh
+
+
+# Using winget on Windows
+winget upgrade Ukhirani.Bp
+`}
                 />
               </div>
 

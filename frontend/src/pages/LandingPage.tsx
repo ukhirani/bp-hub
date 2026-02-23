@@ -24,7 +24,7 @@ function InstallTabs() {
     mac: "brew install ukhirani/bp/bp",
     linux:
       "curl -fsSL https://raw.githubusercontent.com/ukhirani/boilerplate/main/install.sh | sh",
-    windows: "go install github.com/ukhirani/boilerplate/bp@latest",
+    windows: "winget install Ukhirani.Bp",
   };
 
   const handleCopy = async () => {
