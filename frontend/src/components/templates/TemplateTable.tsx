@@ -7,6 +7,7 @@ import { Token } from "@astryxdesign/core/Token";
 import { Timestamp } from "@astryxdesign/core/Timestamp";
 import { useMediaQuery } from "@astryxdesign/core/hooks";
 import type { Template } from "@/types/Template";
+import TechMark from "@/components/TechMark";
 import {
   TYPE_LABELS,
   tagColor,
@@ -39,6 +40,7 @@ export default function TemplateTable({
       renderCell: (t) => (
         <VStack gap={0.5}>
           <HStack gap={1} vAlign="center" wrap="wrap">
+            <TechMark tags={t.Tags} size={16} />
             {hasOwner && (
               <>
                 <Link href={`/home/profile/${templateOwner(t)}`} color="secondary">

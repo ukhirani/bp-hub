@@ -8,8 +8,8 @@
     --ss-accent: #1f3fd6;
     --ss-accent-soft: #e3e8fb;
     --ss-accent-text: #1f3fd6;
-    --ss-font: "Mona Sans", system-ui, sans-serif;
-    --ss-mono: "JetBrains Mono", ui-monospace, monospace;
+    --ss-font: "Google Sans Variable", system-ui, sans-serif;
+    --ss-mono: "Google Sans Code Variable", ui-monospace, monospace;
     --ss-term-path: #8ea8ff;
     --ss-term-sigil: #b9c8ff;
     --ss-term-ok: #7ee2a8;
@@ -103,6 +103,7 @@
     display: inline-flex;
     align-items: center;
     height: 16px;
+    gap: 4px;
     padding: 0 7px;
     border-radius: 8px;
     font-size: 10.5px;

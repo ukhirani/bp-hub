@@ -281,7 +281,6 @@ export default function Docs() {
           </P>
 
           <List density="compact" listStyle="disc">
-            <ListItem label={<><Text weight="semibold">Lightning fast.</Text> Generate project structures in seconds, not minutes.</>} />
             <ListItem label={<><Text weight="semibold">Template everything.</Text> Save any file or directory as a reusable template.</>} />
             <ListItem label={<><Text weight="semibold">Automated setup.</Text> Run pre and post commands automatically after generation.</>} />
             <ListItem label={<><Text weight="semibold">Share and discover.</Text> Share templates with the community via BP Hub.</>} />
@@ -675,7 +674,7 @@ chmod -R 755 ~/boilerplate/templates/`}
             <VStack gap={2}>
               <SubHeading>Can I use bp without an account?</SubHeading>
               <P>
-                Yes! The CLI works completely offline for local templates. You
+                Yes. The CLI works completely offline for local templates. You
                 only need an account to use BP Hub features like cloning and
                 sharing templates.
               </P>
@@ -704,7 +703,7 @@ winget upgrade Ukhirani.Bp
             <VStack gap={2}>
               <SubHeading>Can I backup my templates?</SubHeading>
               <P>
-                Yes, simply backup the{" "}
+                Yes: back up the{" "}
                 <Code>~/boilerplate/templates/</Code>{" "}
                 directory. You can also version control it with Git.
               </P>
@@ -713,8 +712,8 @@ winget upgrade Ukhirani.Bp
             <VStack gap={2}>
               <SubHeading>What file types are supported?</SubHeading>
               <P>
-                Any file type! Boilerplate doesn't process file contents - it
-                simply copies them. You can template any programming language,
+                Any file type. Boilerplate doesn't process file contents: it
+                copies them as they are. You can template any programming language,
                 config format, or binary file.
               </P>
             </VStack>
@@ -724,10 +723,10 @@ winget upgrade Ukhirani.Bp
         <Divider />
         <HStack hAlign="between" vAlign="center" wrap="wrap" gap={3}>
           <Text type="supporting" color="secondary">
-            Made for developers
+            © 2026 Boilerplate
           </Text>
           <Link href="https://github.com/ukhirani/boilerplate" isExternalLink type="supporting">
-            Star on GitHub
+            Source on GitHub
           </Link>
         </HStack>
       </VStack>

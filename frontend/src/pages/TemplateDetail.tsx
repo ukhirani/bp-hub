@@ -21,6 +21,7 @@ import { useMediaQuery } from "@astryxdesign/core/hooks";
 import { FileQuestion } from "lucide-react";
 
 import type { Template } from "@/types/Template";
+import TechMark from "@/components/TechMark";
 import { API_BASE } from "@/lib/api";
 import { TYPE_LABELS, codeLanguage, tagColor } from "@/lib/templates";
 
@@ -172,6 +173,7 @@ export default function TemplateDetail() {
           <BreadcrumbItem isCurrent>{template.TemplateName}</BreadcrumbItem>
         </Breadcrumbs>
         <HStack gap={3} vAlign="center" wrap="wrap">
+          <TechMark tags={template.Tags} size={28} />
           <Heading level={1} wordBreak="break-word">
             {template.TemplateName}
           </Heading>

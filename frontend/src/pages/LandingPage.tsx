@@ -57,20 +57,16 @@ const STEPS = [
 
 const FEATURES = [
   {
-    title: "Template anything",
-    description: "Save any file or directory as a reusable template with a single command.",
+    title: "Any file or folder",
+    description: "bp copies contents as they are, so any language, config format or binary works.",
   },
   {
-    title: "Automated setup",
-    description: "Run pre and post commands automatically. Install deps, format code, and more.",
+    title: "Setup commands included",
+    description: "Pre and post commands run around generation: install dependencies, init a module, format the code.",
   },
   {
-    title: "Lightning fast",
-    description: "Generate project structures in seconds. No more copy-pasting from old projects.",
-  },
-  {
-    title: "Share & discover",
-    description: "Browse templates from the community on BP Hub. Share your best work.",
+    title: "Shared on BP Hub",
+    description: "Publish a template from the web and anyone can clone it with bp clone owner/name.",
   },
 ];
 
@@ -159,17 +155,17 @@ export default function LandingPage() {
   return (
     <VStack gap={0} minHeight="100dvh">
       {/* Hero: the blueprint field, the offer, the install, and the product at work */}
-      <VStack className="bp-field" gap={0}>
+      <VStack className="bp-field min-h-svh" gap={0}>
         <SiteHeader signedIn={signedIn} />
         <Grid
           columns={{ minWidth: 440, max: 2, repeat: "fit" }}
           gap={10}
           align="center"
-          className="mx-auto w-full max-w-7xl px-6 pt-10 pb-0 lg:pt-16 xl:grid-cols-[minmax(0,1fr)_640px]"
+          className="mx-auto w-full max-w-7xl flex-1 px-6 pt-10 pb-0 lg:pt-16 xl:grid-cols-[minmax(0,1fr)_640px]"
         >
-          <VStack gap={8} paddingBlockEnd={10}>
+          <VStack gap={8} paddingBlockEnd={10} className="bp-enter">
             <VStack gap={5}>
-              <Heading level={1} color="inherit" className="bp-display text-5xl sm:text-6xl xl:text-7xl">
+              <Heading level={1} color="inherit" className="bp-display text-5xl sm:text-6xl xl:text-[4.25rem]">
                 Skip the boilerplate. Start building.
               </Heading>
               <Text type="large" color="inherit" className="bp-ink-2 max-w-xl" textWrap="pretty">
@@ -180,7 +176,7 @@ export default function LandingPage() {
             <InstallBox />
             <HStack gap={3} wrap="wrap">
               <Button
-                label={signedIn ? "Browse templates" : "Get started"}
+                label={signedIn ? "Browse templates" : "Create an account"}
                 size="lg"
                 href={start}
                 className="bp-btn-light"
@@ -199,10 +195,10 @@ export default function LandingPage() {
       <VStack as="section" gap={8} className="mx-auto w-full max-w-7xl px-6 py-20 lg:py-28" aria-labelledby="workflow">
         <VStack gap={2}>
           <Heading level={2} id="workflow" type="display-3">
-            Simple. Powerful. Fast.
+            Three commands cover the whole workflow
           </Heading>
           <Text type="large" color="secondary">
-            Three commands are all you need to master.
+            Save a file or folder once, generate it in any project, and clone what others share.
           </Text>
         </VStack>
         <VStack gap={0} className="border-t border-strong">
@@ -236,7 +232,7 @@ export default function LandingPage() {
           <VStack gap={8}>
             <VStack gap={2}>
               <Heading level={2} id="why" type="display-3">
-                Why Boilerplate?
+                Templates that set themselves up
               </Heading>
               <Text type="large" color="secondary">
                 Stop rewriting the same code. Save it once, use it everywhere.
@@ -273,20 +269,20 @@ export default function LandingPage() {
       <VStack as="section" className="bp-field" gap={0} aria-labelledby="cta">
         <VStack gap={6} hAlign="center" className="mx-auto w-full max-w-3xl px-6 py-24 text-center">
           <Heading level={2} id="cta" color="inherit" justify="center" className="bp-display text-4xl sm:text-5xl">
-            Ready to stop repeating yourself?
+            Your next project can start from the last one
           </Heading>
           <Text type="large" color="inherit" justify="center" className="bp-ink-2">
-            Join developers who are saving hours every week with Boilerplate.
+            Install bp, run bp add on the folder you keep copying, and generate it next time.
           </Text>
           <HStack gap={3} wrap="wrap" hAlign="center">
             <Button
-              label={signedIn ? "Open BP Hub" : "Create account"}
+              label={signedIn ? "Open BP Hub" : "Create an account"}
               size="lg"
               href={start}
               className="bp-btn-light"
               endContent={<Icon icon={ArrowRight} />}
             />
-            <Button label="View documentation" size="lg" variant="ghost" href="/docs" className="bp-btn-onfield" />
+            <Button label="Read the docs" size="lg" variant="ghost" href="/docs" className="bp-btn-onfield" />
           </HStack>
         </VStack>
       </VStack>

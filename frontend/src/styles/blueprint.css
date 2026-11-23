@@ -47,12 +47,14 @@
     color: var(--bp-cobalt-deep);
   }
 
-  /* Display type: Mona Sans at its widest, like a drawing's title block. */
+  /* Display type: Google Sans Flex set wide and heavy, like a drawing's
+     title block. Rounded terminals (ROND) keep it in Google Sans's voice. */
   .bp-display {
     font-family: var(--font-family-display);
-    font-stretch: 125%;
-    font-weight: 800;
-    letter-spacing: -0.035em;
+    font-stretch: 116%;
+    font-weight: 760;
+    font-variation-settings: "ROND" 40, "opsz" 96;
+    letter-spacing: -0.03em;
     line-height: 0.98;
     text-wrap: balance;
   }
@@ -105,8 +107,26 @@
     background-color: rgb(255 255 255 / 0.2);
   }
 
+  /* The hero's one entrance: the copy rises and sharpens once on load.
+     Visible by default; only the animation starts it offset. */
+  @media (prefers-reduced-motion: no-preference) {
+    .bp-enter > * {
+      animation: bp-enter 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    .bp-enter > :nth-child(2) { animation-delay: 80ms; }
+    .bp-enter > :nth-child(3) { animation-delay: 160ms; }
+  }
+
   /* Focus on the field stays visible against cobalt. */
   .bp-field :focus-visible {
     outline-color: var(--bp-ink);
+  }
+}
+
+@keyframes bp-enter {
+  from {
+    opacity: 0.001;
+    transform: translateY(14px);
+    filter: blur(6px);
   }
 }

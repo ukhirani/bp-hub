@@ -19,17 +19,6 @@
       "source": "dial"
     },
     {
-      "thing": "font",
-      "value": "mona-sans",
-      "source": "dial"
-    },
-    {
-      "thing": "font",
-      "value": "jetbrains-mono",
-      "source": "dial",
-      "on": "code"
-    },
-    {
       "thing": "surfaces",
       "value": "outlined",
       "source": "dial"
@@ -59,6 +48,17 @@
       "source": "property",
       "on": "side-nav-item",
       "state": "selected"
+    },
+    {
+      "thing": "font",
+      "value": "\"Google Sans Variable\", system-ui, sans-serif",
+      "source": "dial"
+    },
+    {
+      "thing": "font",
+      "value": "\"Google Sans Code Variable\", ui-monospace, monospace",
+      "source": "dial",
+      "on": "code"
     }
   ],
   "lifted": [],

@@ -92,9 +92,9 @@ export const blueprintTheme = {
     "--_astryx-pre-tempo-duration-slow": "700ms",
     "--_astryx-pre-tempo-duration-slow-max": "935ms",
     "--_astryx-motion-tempo": "1",
-    "--font-family-body": "\"Mona Sans\", system-ui, sans-serif",
-    "--font-family-heading": "\"Mona Sans\", system-ui, sans-serif",
-    "--font-family-code": "\"JetBrains Mono\", ui-monospace, monospace",
+    "--font-family-body": "\"Google Sans Variable\", system-ui, sans-serif",
+    "--font-family-heading": "\"Google Sans Variable\", system-ui, sans-serif",
+    "--font-family-code": "\"Google Sans Code Variable\", ui-monospace, monospace",
     "--color-syntax-keyword": "light-dark(#6b187c, #efa8ff)",
     "--color-syntax-string": "light-dark(#0b5615, #a4d6a3)",
     "--color-syntax-comment": "light-dark(#525252, #b9b9b9)",
@@ -612,11 +612,11 @@ export const blueprintTheme = {
         "ratio": 1.2
       },
       "body": {
-        "family": "Mona Sans",
+        "family": "Google Sans Variable",
         "fallbacks": "system-ui, sans-serif"
       },
       "heading": {
-        "family": "Mona Sans",
+        "family": "Google Sans Variable",
         "fallbacks": "system-ui, sans-serif",
         "weights": {
           "3": "bold",
@@ -624,7 +624,7 @@ export const blueprintTheme = {
         }
       },
       "code": {
-        "family": "JetBrains Mono",
+        "family": "Google Sans Code Variable",
         "fallbacks": "ui-monospace, monospace"
       }
     },

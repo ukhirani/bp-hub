@@ -5,7 +5,7 @@
  */
 @layer reset, theme, base, astryx-base, astryx-theme, components, utilities;
 
-@import "@fontsource-variable/mona-sans/wdth.css";
+@import "@fontsource-variable/google-sans-flex/full.css";
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/preflight.css" layer(base);
 @import "@astryxdesign/core/reset.css";
@@ -13,10 +13,10 @@
 @import "@astryxdesign/core/tailwind-theme.css";
 @import "tailwindcss/utilities.css" layer(utilities);
 
-/* The whole app uses Mona Sans; the variable cut adds the width axis the
-   landing page's display type uses. */
+/* The app is set in Google Sans (theme). Google Sans Flex, from the same
+   family, carries the width axis the public pages' display type uses. */
 :root {
-  --font-family-display: "Mona Sans Variable", "Mona Sans", system-ui, sans-serif;
+  --font-family-display: "Google Sans Flex Variable", "Google Sans Variable", system-ui, sans-serif;
   color-scheme: light dark;
 }
 

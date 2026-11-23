@@ -10,6 +10,7 @@ import {
   type Act,
 } from "@/stageshow/kit";
 import { Check, Copy } from "lucide-react";
+import { siGo } from "simple-icons";
 import logo from "@/assets/white.png";
 import "./clone-demo.css";
 
@@ -122,6 +123,9 @@ function HubCard({ copied }: { copied: boolean }) {
       </div>
       <div className="cd-card__tags">
         <span className="cd-tag" data-lang="go">
+          <svg viewBox="0 0 24 24" width={12} height={12} fill={`#${siGo.hex}`} aria-hidden>
+            <path d={siGo.path} />
+          </svg>
           go
         </span>
         <Bar w={44} h={16} r={8} tone={1} />

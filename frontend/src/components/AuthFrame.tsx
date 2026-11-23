@@ -34,7 +34,7 @@ function FieldPanel() {
         </HStack>
       </Link>
       <VStack gap={8}>
-        <Heading level={2} accessibilityLevel={2} color="inherit" className="bp-display text-5xl">
+        <Heading level={2} accessibilityLevel={2} color="inherit" className="bp-display text-4xl xl:text-5xl">
           Save it once. Use it everywhere.
         </Heading>
         <VStack gap={0}>
