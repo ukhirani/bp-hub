@@ -1,110 +1,206 @@
-import { useState, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Layout, LayoutContent, LayoutHeader } from "@astryxdesign/core/Layout";
+import { HStack, VStack, StackItem } from "@astryxdesign/core/Stack";
+import { Heading } from "@astryxdesign/core/Heading";
+import { Text } from "@astryxdesign/core/Text";
+import { TextInput } from "@astryxdesign/core/TextInput";
+import {
+  SegmentedControl,
+  SegmentedControlItem,
+} from "@astryxdesign/core/SegmentedControl";
+import { Button } from "@astryxdesign/core/Button";
+import { EmptyState } from "@astryxdesign/core/EmptyState";
+import { Skeleton } from "@astryxdesign/core/Skeleton";
+import { Icon } from "@astryxdesign/core/Icon";
+import { CloudOff, PackageOpen, Plus, Search } from "lucide-react";
+
 import type { Template } from "@/types/Template";
-import TemplateItem from "@/components/templates/TemplateItem";
-import SearchBar from "@/components/templates/SearchBar";
+import TemplateTable from "@/components/templates/TemplateTable";
+import { API_BASE } from "@/lib/api";
+import { templateName, templateOwner } from "@/lib/templates";
+
+type TypeFilter = "all" | "file" | "dir";
+
+function LoadingRows() {
+  return (
+    <VStack gap={4} padding={4}>
+      {[0, 1, 2, 3, 4, 5].map((i) => (
+        <HStack key={i} gap={6} vAlign="center">
+          <StackItem size="fill">
+            <VStack gap={2}>
+              <Skeleton width={i % 2 ? "42%" : "30%"} height={14} index={i} />
+              <Skeleton width={i % 2 ? "22%" : "34%"} height={10} index={i} />
+            </VStack>
+          </StackItem>
+          <Skeleton width={72} height={12} index={i} />
+          <Skeleton width={56} height={12} index={i} />
+        </HStack>
+      ))}
+    </VStack>
+  );
+}
 
 export default function Home() {
   const [templates, setTemplates] = useState<Template[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [typeFilter, setTypeFilter] = useState<TypeFilter>("all");
 
-  // Fetch templates from API
-  useEffect(() => {
-    async function fetchTemplates() {
-      try {
-        setLoading(true);
-        const response = await fetch(
-          "https://bp-hub-render-service.onrender.com/getTemplates",
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch templates");
-        }
-        const data = await response.json();
-        const templatesFromApi = Array.isArray(data)
+  const fetchTemplates = useCallback(async (signal?: AbortSignal) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await fetch(`${API_BASE}/getTemplates`, { signal });
+      if (!response.ok) throw new Error("The registry did not answer.");
+      const data = await response.json();
+      setTemplates(
+        Array.isArray(data)
           ? data
           : Array.isArray(data?.templates)
             ? data.templates
-            : [];
-        setTemplates(templatesFromApi);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "An error occurred");
-      } finally {
-        setLoading(false);
-      }
+            : [],
+      );
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") return;
+      setError(err instanceof Error ? err.message : "Something went wrong.");
+    } finally {
+      if (!signal?.aborted) setLoading(false);
     }
-
-    fetchTemplates();
   }, []);
 
-  // Filter templates based on search query
+  useEffect(() => {
+    const controller = new AbortController();
+    fetchTemplates(controller.signal);
+    return () => controller.abort();
+  }, [fetchTemplates]);
+
   const filteredTemplates = useMemo(() => {
-    if (!searchQuery.trim()) {
-      return templates;
-    }
-
     const query = searchQuery.trim().toLowerCase();
-    return templates.filter((template) => {
-      const rawTemplateName =
-        template.TemplateName || (template as { Name?: string }).Name || "";
-      const rawUsername =
-        template.Username || (template as { username?: string }).username || "";
-
-      const templateName = rawTemplateName.toLowerCase();
-      const username = rawUsername.toLowerCase();
-      const combined = `${username}/${templateName}`;
-
+    return templates.filter((t) => {
+      if (typeFilter !== "all" && t.Type !== typeFilter) return false;
+      if (!query) return true;
+      const name = templateName(t).toLowerCase();
+      const owner = templateOwner(t).toLowerCase();
+      const tags = (t.Tags ?? []).join(" ").toLowerCase();
       return (
-        templateName.includes(query) ||
-        username.includes(query) ||
-        combined.includes(query)
+        name.includes(query) ||
+        owner.includes(query) ||
+        `${owner}/${name}`.includes(query) ||
+        tags.includes(query)
       );
     });
-  }, [templates, searchQuery]);
+  }, [templates, searchQuery, typeFilter]);
 
+  const isFiltered = searchQuery.trim() !== "" || typeFilter !== "all";
+
+  let body;
   if (loading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400"></div>
-      </div>
+    body = <LoadingRows />;
+  } else if (error) {
+    body = (
+      <EmptyState
+        icon={<Icon icon={CloudOff} size="lg" color="secondary" />}
+        title="Couldn't load templates"
+        description={`${error} The free server can take a minute to wake up; try again in a moment.`}
+        actions={
+          <Button label="Try again" variant="primary" onClick={() => fetchTemplates()} />
+        }
+      />
     );
-  }
-
-  if (error) {
-    return (
-      <div className="flex items-center justify-center py-12 text-red-400">
-        {error}
-      </div>
+  } else if (templates.length === 0) {
+    body = (
+      <EmptyState
+        icon={<Icon icon={PackageOpen} size="lg" color="secondary" />}
+        title="No templates yet"
+        description="Templates you publish with bp or add here show up for everyone. Be the first."
+        actions={
+          <Button
+            label="Add template"
+            variant="primary"
+            icon={<Icon icon={Plus} />}
+            href="/home/templates/new"
+          />
+        }
+      />
     );
-  }
-
-  if (templates.length === 0) {
-    return (
-      <div className="flex items-center justify-center py-12 text-gray-500">
-        No templates found
-      </div>
+  } else {
+    body = (
+      <TemplateTable
+        templates={filteredTemplates}
+        emptyState={
+          <EmptyState
+            isCompact
+            title="No matching templates"
+            description="Try a different name, owner or tag, or clear the filters."
+            actions={
+              <Button
+                label="Clear filters"
+                onClick={() => {
+                  setSearchQuery("");
+                  setTypeFilter("all");
+                }}
+              />
+            }
+          />
+        }
+      />
     );
   }
 
   return (
-    <div>
-      {/* Search Bar */}
-      <div className="px-4 sm:px-6 pb-4 border-b border-gray-800">
-        <SearchBar value={searchQuery} onChange={setSearchQuery} />
-      </div>
-
-      {/* Templates List */}
-      <div>
-        {filteredTemplates.length === 0 ? (
-          <div className="flex items-center justify-center py-12 text-gray-500">
-            No templates found matching "{searchQuery}"
-          </div>
-        ) : (
-          filteredTemplates.map((template) => (
-            <TemplateItem key={template.TemplateID} template={template} />
-          ))
-        )}
-      </div>
-    </div>
+    <Layout
+      height="auto"
+      contentWidth={1120}
+      header={
+        <LayoutHeader padding={6} paddingBlockEnd={4}>
+          <VStack gap={4}>
+            <HStack gap={3} vAlign="end" wrap="wrap">
+              <StackItem size="fill">
+                <VStack gap={1}>
+                  <Heading level={1}>Templates</Heading>
+                  <Text type="body" color="secondary">
+                    {loading
+                      ? "Loading the registry…"
+                      : isFiltered
+                        ? `${filteredTemplates.length} of ${templates.length} templates`
+                        : `${templates.length} templates from the community, ready to clone with bp`}
+                  </Text>
+                </VStack>
+              </StackItem>
+            </HStack>
+            <HStack gap={3} vAlign="center" wrap="wrap">
+              <StackItem size="fill">
+                <TextInput
+                  label="Search templates"
+                  isLabelHidden
+                  type="search"
+                  value={searchQuery}
+                  onChange={setSearchQuery}
+                  placeholder="Search by name, owner or tag"
+                  startIcon={Search}
+                  hasClear
+                  width="100%"
+                />
+              </StackItem>
+              <SegmentedControl
+                label="Template type"
+                value={typeFilter}
+                onChange={(v) => setTypeFilter(v as TypeFilter)}
+              >
+                <SegmentedControlItem value="all" label="All" />
+                <SegmentedControlItem value="file" label="Files" />
+                <SegmentedControlItem value="dir" label="Directories" />
+              </SegmentedControl>
+            </HStack>
+          </VStack>
+        </LayoutHeader>
+      }
+      content={
+        <LayoutContent padding={6} isScrollable={false}>
+          {body}
+        </LayoutContent>
+      }
+    />
   );
 }

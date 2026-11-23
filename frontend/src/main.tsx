@@ -1,95 +1,68 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-
-import Login from "./pages/Login.tsx";
-import Signup from "./pages/Signup.tsx";
-import Onboarding from "./pages/Onboarding.tsx";
-import Home from "./pages/Home.tsx";
-import Profile from "./pages/Profile.tsx";
-import NotFound from "./pages/NotFound.tsx";
-import TemplateDetail from "./pages/TemplateDetail.tsx";
-import AddTemplate from "./pages/AddTemplate.tsx";
-import Docs from "./pages/Docs.tsx";
-import LandingPage from "./pages/LandingPage.tsx";
-import DashboardLayout from "./components/layout/DashboardLayout.tsx";
-import { AuthProvider } from "./context/AuthContext.tsx";
-
+// Declares the cascade-layer order; must load before any theme stylesheet.
 import "./index.css";
 
+import { StrictMode, Suspense, lazy, type ReactNode } from "react";
+import { createRoot } from "react-dom/client";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { Theme } from "@astryxdesign/core/theme";
+import { LinkProvider } from "@astryxdesign/core/Link";
+import { LayerProvider } from "@astryxdesign/core/Layer";
+
+import { themes, defaultThemeSlug } from "./astryx-themes";
+import AppLink from "./lib/AppLink.tsx";
+
+const Login = lazy(() => import("./pages/Login.tsx"));
+const Signup = lazy(() => import("./pages/Signup.tsx"));
+const Onboarding = lazy(() => import("./pages/Onboarding.tsx"));
+const Home = lazy(() => import("./pages/Home.tsx"));
+const Profile = lazy(() => import("./pages/Profile.tsx"));
+const NotFound = lazy(() => import("./pages/NotFound.tsx"));
+const TemplateDetail = lazy(() => import("./pages/TemplateDetail.tsx"));
+const AddTemplate = lazy(() => import("./pages/AddTemplate.tsx"));
+const Docs = lazy(() => import("./pages/Docs.tsx"));
+const LandingPage = lazy(() => import("./pages/LandingPage.tsx"));
+const DashboardLayout = lazy(() => import("./components/layout/DashboardLayout.tsx"));
+import { AuthProvider } from "./context/AuthContext.tsx";
+
+// Each route loads its own chunk; nothing shows until it arrives (they are small).
+const page = (node: ReactNode) => <Suspense fallback={null}>{node}</Suspense>;
+
 const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <LandingPage />,
-  },
-  {
-    path: "/docs",
-    element: <Docs />,
-  },
-  {
-    path: "/login",
-    element: <Login />,
-  },
-  {
-    path: "/signup",
-    element: <Signup />,
-  },
-  {
-    path: "/onboarding",
-    element: <Onboarding />,
-  },
+  { path: "/", element: page(<LandingPage />) },
+  { path: "/docs", element: page(<Docs />) },
+  { path: "/login", element: page(<Login />) },
+  { path: "/signup", element: page(<Signup />) },
+  { path: "/onboarding", element: page(<Onboarding />) },
   {
     path: "/home",
-    element: <DashboardLayout />,
+    element: page(<DashboardLayout />),
     children: [
-      {
-        index: true,
-        element: <Home />,
-      },
+      { index: true, element: page(<Home />) },
       {
         path: "templates/:username/:templateName",
-        element: <TemplateDetail />,
+        element: page(<TemplateDetail />),
       },
-      {
-        path: "templates/new",
-        element: <AddTemplate />,
-      },
-      {
-        path: "profile/:username",
-        element: <Profile />,
-      },
-      {
-        path: "deployments",
-        element: <Home />, // Placeholder - can be replaced with actual component
-      },
-      {
-        path: "activity",
-        element: <Home />, // Placeholder - can be replaced with actual component
-      },
-      {
-        path: "domains",
-        element: <Home />, // Placeholder - can be replaced with actual component
-      },
-      {
-        path: "usage",
-        element: <Home />, // Placeholder - can be replaced with actual component
-      },
-      {
-        path: "settings",
-        element: <Home />, // Placeholder - can be replaced with actual component
-      },
+      { path: "templates/new", element: page(<AddTemplate />) },
+      { path: "profile/:username", element: page(<Profile />) },
+      // Reserved sections, not built yet: they show the template list.
+      ...["deployments", "activity", "domains", "usage", "settings"].map(
+        (path) => ({ path, element: page(<Home />) }),
+      ),
     ],
   },
-  {
-    path: "*",
-    element: <NotFound>Page not found</NotFound>,
-  },
+  { path: "*", element: page(<NotFound />) },
 ]);
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <AuthProvider>
-      <RouterProvider router={router} />
-    </AuthProvider>
+    <Theme theme={themes[defaultThemeSlug]}>
+      <LayerProvider>
+        <LinkProvider component={AppLink}>
+          <AuthProvider>
+            <RouterProvider router={router} />
+          </AuthProvider>
+        </LinkProvider>
+      </LayerProvider>
+    </Theme>
   </StrictMode>,
 );

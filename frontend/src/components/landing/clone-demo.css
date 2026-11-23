@@ -1,0 +1,172 @@
+/* CloneDemo: every rule is scoped under the demo's root class. */
+.cd {
+  & .ss-stage {
+    /* The page's blueprint field is the ground: no plate under the hero. */
+    background: transparent;
+    overflow: hidden;
+    border-radius: 0;
+    --ss-accent: #1f3fd6;
+    --ss-accent-soft: #e3e8fb;
+    --ss-accent-text: #1f3fd6;
+    --ss-font: "Mona Sans", system-ui, sans-serif;
+    --ss-mono: "JetBrains Mono", ui-monospace, monospace;
+    --ss-term-path: #8ea8ff;
+    --ss-term-sigil: #b9c8ff;
+    --ss-term-ok: #7ee2a8;
+    --ss-term-dim: #6b6f7d;
+    --ss-shadow-hero: 0 30px 60px -18px rgb(6 14 60 / 0.55), 0 12px 24px -12px rgb(6 14 60 / 0.4);
+    --ss-shadow-satellite: 0 18px 40px -12px rgb(6 14 60 / 0.5), 0 4px 10px -4px rgb(6 14 60 / 0.3);
+  }
+
+  /* Corner bleed: the terminal is inset top and left and runs off the
+     right and bottom edges; the hub card straddles its left edge below the
+     output, over empty terminal, never over a line. */
+  & .cd-term {
+    position: absolute;
+    top: 28px;
+    left: 132px;
+    width: 480px;
+    height: 520px;
+  }
+
+  & .ss-window[data-chrome="terminal"] {
+    --ss-term-bg: #0d1020;
+  }
+
+  & .cd-term__body {
+    height: 100%;
+    color: #a9adbd;
+  }
+
+  & .cd-add {
+    color: #8ea8ff;
+  }
+
+  & .cd-done {
+    color: #e8ebf5;
+    font-weight: 600;
+  }
+
+  & .cd-card {
+    position: absolute;
+    left: 28px;
+    top: 322px;
+    width: 256px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px;
+    border-radius: 12px;
+    background: #fff;
+    color: #171b25;
+    font-family: var(--ss-font);
+    box-shadow: var(--ss-shadow-satellite);
+  }
+
+  & .cd-card__head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #5d6577;
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  & .cd-card__title {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    font-size: 15px;
+    line-height: 1.2;
+  }
+
+  & .cd-card__owner {
+    color: #5d6577;
+  }
+
+  & .cd-card__slash {
+    color: #868fa2;
+  }
+
+  & .cd-card__name {
+    color: #1f3fd6;
+    font-weight: 650;
+  }
+
+  & .cd-card__tags {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  & .cd-tag {
+    display: inline-flex;
+    align-items: center;
+    height: 16px;
+    padding: 0 7px;
+    border-radius: 8px;
+    font-size: 10.5px;
+    font-weight: 500;
+    background: #dff4f8;
+    color: #0e5f6e;
+  }
+
+  & .cd-card__cmd {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 4px 4px 10px;
+    border-radius: 8px;
+    background: #eff1f4;
+  }
+
+  & .cd-card__cmd code {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font: 11px/1.4 var(--ss-mono);
+    color: #3e4554;
+  }
+
+  & .cd-copy {
+    min-width: 76px;
+  }
+
+  & .cd-rest {
+    position: absolute;
+    left: 470px;
+    top: 420px;
+  }
+
+  /* Compact: the terminal fills the column, the card straddles its foot. */
+  & .ss-stage[data-layout="compact"] {
+    & .cd-term {
+      top: 16px;
+      left: 12px;
+      width: 420px;
+      height: 330px;
+    }
+
+    & .ss-term {
+      font-size: 10px;
+      padding-inline: 12px;
+    }
+
+    & .ss-term__path {
+      display: none;
+    }
+
+    & .cd-card {
+      left: 12px;
+      top: 316px;
+      width: 300px;
+    }
+
+    & .cd-rest {
+      left: 290px;
+      top: 300px;
+    }
+  }
+}

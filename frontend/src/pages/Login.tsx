@@ -1,26 +1,15 @@
-import "../index.css";
-
-import bpLogo from "@/assets/white.png";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import {
-  Field,
-  FieldDescription,
-  FieldGroup,
-  FieldLabel,
-} from "../components/ui/field";
-import { Input } from "@/components/ui/input";
-import Snackbar, { type SnackbarNotice } from "@/components/ui/snackbar";
-
 import { useEffect, useState, type FormEvent } from "react";
-import "./Login.css";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "@/context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { VStack } from "@astryxdesign/core/Stack";
+import { TextInput } from "@astryxdesign/core/TextInput";
+import { Button } from "@astryxdesign/core/Button";
+import { Banner } from "@astryxdesign/core/Banner";
+import { Text } from "@astryxdesign/core/Text";
+import { Link } from "@astryxdesign/core/Link";
 
-type Credentials = {
-  email: string;
-  password: string;
-};
+import AuthFrame from "@/components/AuthFrame";
+import { useAuth } from "@/context/AuthContext";
+import { fetchUserStatus, postJSON } from "@/lib/api";
 
 type AuthSuccessResponse = {
   idToken: string;
@@ -30,127 +19,76 @@ type AuthSuccessResponse = {
   localId: string;
 };
 
-type AuthErrorResponse = {
-  error?: {
-    message?: string;
-  };
+type Problem = {
+  title: string;
+  message: string;
+  status: "warning" | "error";
+  field?: "email" | "password";
 };
 
-type UserStatusResponse = {
-  hasProfile: boolean;
-  username?: string;
-};
-
-function mapAuthError(code: string): SnackbarNotice {
+function mapAuthError(code: string): Problem {
   switch (code) {
     case "EMAIL_NOT_VERIFIED":
       return {
-        title: "Verify your email",
-        message:
-          "Check your inbox and click the verification link to continue.",
-        tone: "warning",
+        title: "Verify your email first",
+        message: "Open the verification link we sent you, then sign in again.",
+        status: "warning",
       };
     case "INVALID_LOGIN_CREDENTIALS":
     case "INVALID_PASSWORD":
     case "EMAIL_NOT_FOUND":
       return {
         title: "Incorrect email or password",
-        message:
-          "Double-check your details and try again. If you forgot your password, reset it.",
-        tone: "error",
+        message: "Check both and try again.",
+        status: "error",
+        field: "password",
       };
     case "USER_DISABLED":
       return {
-        title: "Account disabled",
-        message: "This account is disabled. Contact support to restore access.",
-        tone: "error",
+        title: "This account is disabled",
+        message: "Contact support to restore access.",
+        status: "error",
       };
     case "TOO_MANY_ATTEMPTS_TRY_LATER":
       return {
         title: "Too many attempts",
-        message: "Please wait a few minutes before trying again.",
-        tone: "error",
+        message: "Wait a few minutes before trying again.",
+        status: "error",
       };
     default:
       return {
-        title: "Unable to sign in",
-        message: "Please try again. If the issue persists, try later.",
-        tone: "error",
+        title: "Couldn't sign you in",
+        message: "Something went wrong on our side. Try again in a moment.",
+        status: "error",
       };
   }
 }
 
-async function loginUser(credentials: Credentials) {
-  const response = await fetch("https://bp-hub-render-service.onrender.com/login", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(credentials),
-  });
-
-  const data = (await response.json().catch(() => ({}))) as
-    | AuthSuccessResponse
-    | AuthErrorResponse;
-
-  if (!response.ok) {
-    const message =
-      (data as AuthErrorResponse)?.error?.message ?? "LOGIN_FAILED";
-    throw new Error(message);
-  }
-
-  return data as AuthSuccessResponse;
-}
-
-async function fetchUserStatus(idToken: string) {
-  const response = await fetch("https://bp-hub-render-service.onrender.com/userStatus", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ idToken }),
-  });
-
-  const data = (await response.json().catch(() => ({}))) as
-    | UserStatusResponse
-    | AuthErrorResponse;
-
-  if (!response.ok) {
-    const message =
-      (data as AuthErrorResponse)?.error?.message ?? "USER_STATUS_FAILED";
-    throw new Error(message);
-  }
-
-  return data as UserStatusResponse;
-}
-
-export default function Login({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+export default function Login() {
   const { token, setToken, setUsername: setAuthUsername } = useAuth();
   const navigate = useNavigate();
 
-  // If the user is already authenticated, send them to the home page.
-  useEffect(() => {
-    if (token) {
-      navigate("/home", { replace: true });
-    }
-  }, [token, navigate]);
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [notice, setNotice] = useState<SnackbarNotice | null>(null);
+  const [problem, setProblem] = useState<Problem | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Already signed in: go straight to the registry.
+  useEffect(() => {
+    if (token) navigate("/home", { replace: true });
+  }, [token, navigate]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    setNotice(null);
+    setProblem(null);
     setIsSubmitting(true);
 
     try {
-      const auth = await loginUser({ email, password });
+      const auth = await postJSON<AuthSuccessResponse>(
+        "/login",
+        { email, password },
+        "LOGIN_FAILED",
+      );
       setToken({ token: auth.idToken, refreshToken: auth.refreshToken });
       const status = await fetchUserStatus(auth.idToken);
       if (!status.hasProfile) {
@@ -164,79 +102,73 @@ export default function Login({
         "app_notice",
         JSON.stringify({
           title: `Welcome back, ${username}`,
-          message: "You are signed in and ready to go.",
+          message: "You're signed in.",
           tone: "success",
         }),
       );
       navigate("/home", { replace: true });
     } catch (err) {
-      const code = err instanceof Error ? err.message : "LOGIN_FAILED";
-      setNotice(mapAuthError(code));
+      setProblem(mapAuthError(err instanceof Error ? err.message : "LOGIN_FAILED"));
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="bg-background flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
-      <Snackbar notice={notice} onClose={() => setNotice(null)} />
-      <div className="w-full max-w-sm">
-        <div className={cn("flex flex-col gap-3", className)} {...props}>
-          <form onSubmit={handleSubmit}>
-            <FieldGroup>
-              <div className="flex flex-col items-center gap-1 text-center">
-                <a
-                  href="#"
-                  className="flex flex-col items-center gap-1 font-medium"
-                >
-                  <div className="flex  items-center justify-center rounded-md">
-                    <img className="bp-logo" src={bpLogo} alt="" />
-                  </div>
-                  <span className="sr-only">Boilerplate</span>
-                </a>
-                <h2 className="text-xl font-bold">Welcome to Boilerplate</h2>
-              </div>
-              <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
-                <Input
-                  onChange={(e) => setEmail(e.target.value)}
-                  id="email"
-                  type="email"
-                  placeholder="umang@boilerplate.com"
-                  required
-                />
-              </Field>
-
-              <Field>
-                <FieldLabel htmlFor="password">Password</FieldLabel>
-                <Input
-                  onChange={(e) => setPassword(e.target.value)}
-                  id="password"
-                  type="password"
-                  placeholder="•••••••••••••••••"
-                  required
-                />
-              </Field>
-
-              <Field>
-                <Button
-                  className="mt-2"
-                  variant="default"
-                  type="submit"
-                  disabled={isSubmitting}
-                >
-                  Login
-                </Button>
-              </Field>
-              <div className="flex flex-col items-center mt-2 gap-1 text-center">
-                <FieldDescription>
-                  Don&apos;t have an account? <Link to="/signup">Sign up</Link>
-                </FieldDescription>
-              </div>
-            </FieldGroup>
-          </form>
-        </div>
-      </div>
-    </div>
+    <AuthFrame
+      title="Sign in to BP Hub"
+      description="Browse, publish and clone templates."
+      footer={
+        <Text type="supporting" color="secondary">
+          New here? <Link href="/signup" type="supporting">Create an account</Link>
+        </Text>
+      }
+    >
+      <form onSubmit={handleSubmit} noValidate>
+        <VStack gap={4}>
+          {problem && !problem.field && (
+            <Banner status={problem.status} title={problem.title} description={problem.message} />
+          )}
+          <TextInput
+            label="Email"
+            type="email"
+            autoComplete="email"
+            value={email}
+            onChange={setEmail}
+            placeholder="you@example.com"
+            size="lg"
+            isRequired
+            width="100%"
+          />
+          <TextInput
+            label="Password"
+            type="password"
+            autoComplete="current-password"
+            value={password}
+            onChange={(v) => {
+              setPassword(v);
+              if (problem?.field) setProblem(null);
+            }}
+            size="lg"
+            isRequired
+            width="100%"
+            status={
+              problem?.field === "password"
+                ? { type: "error", message: `${problem.title}. ${problem.message}` }
+                : undefined
+            }
+          />
+          <Button
+            label="Sign in"
+            variant="primary"
+            size="lg"
+            type="submit"
+            isLoading={isSubmitting}
+            isDisabled={!email || !password}
+            width="100%"
+          />
+        </VStack>
+      </form>
+    </AuthFrame>
   );
 }

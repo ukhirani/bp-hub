@@ -1,4 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
+import { useToast } from "@astryxdesign/core/Toast";
+import { VStack } from "@astryxdesign/core/Stack";
+import { Text } from "@astryxdesign/core/Text";
 
 export type SnackbarTone = "success" | "warning" | "error" | "info";
 
@@ -14,85 +17,39 @@ type SnackbarProps = {
   durationMs?: number;
 };
 
-const toneStyles: Record<SnackbarTone, string> = {
-  success:
-    "border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
-  warning:
-    "border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400",
-  error: "border-destructive/30 bg-destructive/10 text-destructive",
-  info: "border-blue-500/30 bg-blue-500/10 text-blue-600 dark:text-blue-400",
-};
-
+/**
+ * Shows `notice` as an Astryx toast whenever it changes. Renders nothing
+ * itself: the toast lives in the app's LayerProvider viewport.
+ */
 export default function Snackbar({
   notice,
   onClose,
   durationMs = 6000,
 }: SnackbarProps) {
-  const [isVisible, setIsVisible] = useState(false);
-  const closeTimeoutRef = useRef<number | null>(null);
-  const autoCloseRef = useRef<number | null>(null);
-
-  const clearTimers = () => {
-    if (autoCloseRef.current) {
-      window.clearTimeout(autoCloseRef.current);
-      autoCloseRef.current = null;
-    }
-    if (closeTimeoutRef.current) {
-      window.clearTimeout(closeTimeoutRef.current);
-      closeTimeoutRef.current = null;
-    }
-  };
-
-  const startClose = () => {
-    setIsVisible(false);
-    if (!closeTimeoutRef.current) {
-      closeTimeoutRef.current = window.setTimeout(() => {
-        onClose();
-      }, 220);
-    }
-  };
+  const showToast = useToast();
 
   useEffect(() => {
-    clearTimers();
+    if (!notice) return;
+    showToast({
+      body: (
+        <VStack gap={0.5}>
+          <Text type="body" weight="semibold">
+            {notice.title}
+          </Text>
+          <Text type="supporting" color="inherit">
+            {notice.message}
+          </Text>
+        </VStack>
+      ),
+      type: notice.tone === "error" ? "error" : "info",
+      isAutoHide: true,
+      autoHideDuration: durationMs,
+      uniqueID: `${notice.tone}:${notice.title}`,
+      onHide: onClose,
+    });
+    // onClose is a fresh closure each render; the notice is what matters.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [notice, durationMs, showToast]);
 
-    if (!notice) {
-      setIsVisible(false);
-      return () => clearTimers();
-    }
-
-    setIsVisible(true);
-    autoCloseRef.current = window.setTimeout(() => {
-      startClose();
-    }, durationMs);
-
-    return () => clearTimers();
-  }, [notice, durationMs]);
-
-  if (!notice) return null;
-
-  return (
-    <div className="fixed right-4 top-4 z-50 w-[min(90vw,360px)]">
-      <div
-        role="status"
-        className={`rounded-md border px-4 py-3 shadow-sm transition-all duration-200 ${
-          isVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2"
-        } ${toneStyles[notice.tone]}`}
-      >
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <div className="text-sm font-semibold">{notice.title}</div>
-            <div className="text-xs opacity-90">{notice.message}</div>
-          </div>
-          <button
-            type="button"
-            aria-label="Close notification"
-            onClick={startClose}
-            className="text-xs opacity-70 transition hover:opacity-100"
-          >
-            x
-          </button>
-        </div>
-      </div>
-    </div>
-  );
+  return null;
 }

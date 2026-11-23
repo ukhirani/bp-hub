@@ -1,19 +1,26 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Pencil } from "lucide-react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import { Layout, LayoutContent } from "@astryxdesign/core/Layout";
+import { HStack, VStack, StackItem } from "@astryxdesign/core/Stack";
+import { Heading } from "@astryxdesign/core/Heading";
+import { Text } from "@astryxdesign/core/Text";
+import { Link } from "@astryxdesign/core/Link";
+import { Button } from "@astryxdesign/core/Button";
+import { Card } from "@astryxdesign/core/Card";
+import { TextInput } from "@astryxdesign/core/TextInput";
+import { Markdown } from "@astryxdesign/core/Markdown";
+import { EmptyState } from "@astryxdesign/core/EmptyState";
+import { Skeleton } from "@astryxdesign/core/Skeleton";
+import { Icon } from "@astryxdesign/core/Icon";
+import { Pencil, UserX, PackageOpen } from "lucide-react";
 import { RandomAvatar } from "react-random-avatars";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import MarkdownEditor from "@/components/ui/markdown-editor";
 import Snackbar, { type SnackbarNotice } from "@/components/ui/snackbar";
-import TemplateItem from "@/components/templates/TemplateItem";
+import TemplateTable from "@/components/templates/TemplateTable";
 import type { Template } from "@/types/Template";
-
 import { useAuth } from "@/context/AuthContext";
+import { API_BASE, postJSON } from "@/lib/api";
 
 type UserProfile = {
   username: string;
@@ -22,14 +29,13 @@ type UserProfile = {
   created_at: number;
 };
 
-type AuthErrorResponse = {
-  error?: {
-    message?: string;
-  };
-};
-
 function isAbortError(error: unknown): boolean {
   return error instanceof DOMException && error.name === "AbortError";
+}
+
+function githubHandle(link: string): string {
+  const match = link.match(/github\.com\/([^/?#]+)/i);
+  return match ? `@${match[1]}` : link.replace(/^https?:\/\//, "");
 }
 
 export default function Profile() {
@@ -38,7 +44,7 @@ export default function Profile() {
   const navigate = useNavigate();
 
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [templates, setTemplates] = useState<Template[]>([]);
+  const [templates, setTemplates] = useState<Template[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [notice, setNotice] = useState<SnackbarNotice | null>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -46,66 +52,51 @@ export default function Profile() {
   const [profileDescription, setProfileDescription] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
-  const isOwner = useMemo(() => {
-    if (!authUsername || !profile?.username) return false;
-    return authUsername === profile.username;
-  }, [authUsername, profile]);
+  const isOwner = useMemo(
+    () => !!authUsername && authUsername === profile?.username,
+    [authUsername, profile],
+  );
 
   useEffect(() => {
     if (!username) return;
-
-    const safeUsername = username;
-
     const controller = new AbortController();
-
-    async function fetchProfile() {
-      try {
-        setLoading(true);
-        const response = await fetch(
-          `https://bp-hub-render-service.onrender.com/getUserProfile?username=${encodeURIComponent(safeUsername)}`,
-          { signal: controller.signal },
-        );
-        if (!response.ok) {
-          throw new Error("Profile not found");
-        }
-        const data = (await response.json()) as UserProfile;
+    setLoading(true);
+    setIsEditing(false);
+    fetch(`${API_BASE}/getUserProfile?username=${encodeURIComponent(username)}`, {
+      signal: controller.signal,
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error("Profile not found");
+        return response.json() as Promise<UserProfile>;
+      })
+      .then((data) => {
         setProfile(data);
         setGithubLink(data.github_link || "");
         setProfileDescription(data.profile_description || "");
-      } catch (err) {
+      })
+      .catch((err) => {
         if (isAbortError(err)) return;
-        setNotice({
-          title: "Unable to load profile",
-          message: err instanceof Error ? err.message : "Try again later.",
-          tone: "error",
-        });
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchProfile();
-
+        setProfile(null);
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false);
+      });
     return () => controller.abort();
   }, [username]);
 
   useEffect(() => {
     if (!username) return;
-
-    const safeUsername = username;
-
     const controller = new AbortController();
-
-    fetch(`https://bp-hub-render-service.onrender.com/getUserTemplates?username=${encodeURIComponent(safeUsername)}`, {
+    setTemplates(null);
+    fetch(`${API_BASE}/getUserTemplates?username=${encodeURIComponent(username)}`, {
       signal: controller.signal,
     })
       .then((response) => response.json())
-      .then((data: Template[]) => setTemplates(data || []))
+      .then((data: Template[]) => setTemplates(Array.isArray(data) ? data : []))
       .catch((err) => {
         if (isAbortError(err)) return;
         setTemplates([]);
       });
-
     return () => controller.abort();
   }, [username]);
 
@@ -115,20 +106,18 @@ export default function Profile() {
       navigate("/login", { replace: true });
       return;
     }
-
     if (!githubLink.trim().startsWith("http")) {
       setNotice({
-        title: "Invalid GitHub link",
-        message: "Please provide a valid GitHub URL.",
+        title: "Check your GitHub link",
+        message: "Use the full address, like https://github.com/your-handle.",
         tone: "warning",
       });
       return;
     }
-
     if (!profileDescription.trim()) {
       setNotice({
-        title: "Profile description required",
-        message: "Write a short markdown bio.",
+        title: "Add a short bio",
+        message: "A sentence or two is enough. Markdown works.",
         tone: "warning",
       });
       return;
@@ -136,47 +125,20 @@ export default function Profile() {
 
     setIsSaving(true);
     try {
-      const response = await fetch("https://bp-hub-render-service.onrender.com/updateUserProfile", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          idToken: token,
-          github_link: githubLink,
-          profile_description: profileDescription,
-        }),
-      });
-
-      const data = (await response.json().catch(() => ({}))) as
-        | AuthErrorResponse
-        | { username: string };
-
-      if (!response.ok) {
-        const message =
-          (data as AuthErrorResponse)?.error?.message ?? "UPDATE_FAILED";
-        throw new Error(message);
-      }
-
+      await postJSON(
+        "/updateUserProfile",
+        { idToken: token, github_link: githubLink, profile_description: profileDescription },
+        "UPDATE_FAILED",
+      );
       setProfile((prev) =>
-        prev
-          ? {
-              ...prev,
-              github_link: githubLink,
-              profile_description: profileDescription,
-            }
-          : prev,
+        prev ? { ...prev, github_link: githubLink, profile_description: profileDescription } : prev,
       );
       setIsEditing(false);
+      setNotice({ title: "Profile updated", message: "Your changes are live.", tone: "success" });
+    } catch {
       setNotice({
-        title: "Profile updated",
-        message: "Your changes are live.",
-        tone: "success",
-      });
-    } catch (err) {
-      setNotice({
-        title: "Unable to update profile",
-        message: err instanceof Error ? err.message : "Try again later.",
+        title: "Couldn't save your profile",
+        message: "Something went wrong on our side. Try again.",
         tone: "error",
       });
     } finally {
@@ -184,107 +146,133 @@ export default function Profile() {
     }
   };
 
-  if (!username) {
-    return <div className="p-6 text-gray-400">Profile not found.</div>;
-  }
-
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400"></div>
-      </div>
+      <VStack gap={4} padding={6}>
+        <HStack gap={4} vAlign="center">
+          <Skeleton width={72} height={72} radius="rounded" />
+          <VStack gap={2}>
+            <Skeleton width={180} height={22} />
+            <Skeleton width={120} height={12} />
+          </VStack>
+        </HStack>
+        <Skeleton width="70%" height={14} />
+        <Skeleton width="50%" height={14} />
+      </VStack>
     );
   }
 
-  if (!profile) {
-    return <div className="p-6 text-gray-400">Profile not found.</div>;
+  if (!username || !profile) {
+    return (
+      <EmptyState
+        icon={<Icon icon={UserX} size="lg" color="secondary" />}
+        title="Profile not found"
+        description={`No one goes by ${username ?? "that name"} on BP Hub.`}
+        actions={<Button label="Back to templates" variant="primary" href="/home" />}
+      />
+    );
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
-      <Snackbar notice={notice} onClose={() => setNotice(null)} />
-      <div className="flex flex-col gap-6">
-        <div className="rounded border border-gray-800 bg-[#0f1117] p-6">
-          <div className="flex flex-wrap items-start gap-6">
-            <div className="rounded-full border border-gray-800 bg-[#0a0b0f] p-3">
+    <Layout
+      height="auto"
+      contentWidth={960}
+      content={
+        <LayoutContent padding={6} isScrollable={false}>
+          <Snackbar notice={notice} onClose={() => setNotice(null)} />
+          <VStack gap={8}>
+            <HStack gap={5} vAlign="center" wrap="wrap">
               <RandomAvatar name={profile.username} size={72} />
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex flex-wrap items-center gap-3 w-full">
-                <h1 className="text-2xl font-semibold text-white">{profile.username}</h1>
-                {isOwner && !isEditing && (
-                  <Button
-                    variant="secondary"
-                    onClick={() => setIsEditing(true)}
-                    className="ml-auto bg-blue-500/10 text-blue-300 border border-blue-500/30 hover:bg-blue-500/20"
-                  >
-                    <Pencil className="h-4 w-4" />
-                    Edit profile
-                  </Button>
-                )}
-              </div>
-              <p className="mt-2 text-sm text-gray-400">{profile.github_link}</p>
-            </div>
-          </div>
+              <StackItem size="fill">
+                <VStack gap={1}>
+                  <Heading level={1}>{profile.username}</Heading>
+                  {profile.github_link && (
+                    <Link href={profile.github_link} isExternalLink color="secondary">
+                      {githubHandle(profile.github_link)}
+                    </Link>
+                  )}
+                </VStack>
+              </StackItem>
+              {isOwner && !isEditing && (
+                <Button
+                  label="Edit profile"
+                  icon={<Icon icon={Pencil} />}
+                  onClick={() => setIsEditing(true)}
+                />
+              )}
+            </HStack>
 
-          <div className="mt-6">
             {isEditing ? (
-              <form onSubmit={handleSave} className="space-y-4">
-                <FieldGroup>
-                  <Field>
-                    <FieldLabel>GitHub link</FieldLabel>
-                    <Input
+              <Card padding={6}>
+                <form onSubmit={handleSave}>
+                  <VStack gap={5}>
+                    <Heading level={2}>Edit profile</Heading>
+                    <TextInput
+                      label="GitHub link"
+                      type="url"
                       value={githubLink}
-                      onChange={(event) => setGithubLink(event.target.value)}
+                      onChange={setGithubLink}
                       placeholder="https://github.com/your-handle"
-                      required
+                      isRequired
+                      width="100%"
                     />
-                  </Field>
-                  <Field>
-                    <FieldLabel>Profile description</FieldLabel>
                     <MarkdownEditor
+                      label="Bio"
                       value={profileDescription}
                       onChange={setProfileDescription}
+                      isRequired
                     />
-                  </Field>
-                  <div className="flex items-center justify-end gap-3">
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      onClick={() => setIsEditing(false)}
-                    >
-                      Cancel
-                    </Button>
-                    <Button type="submit" disabled={isSaving}>
-                      Save changes
-                    </Button>
-                  </div>
-                </FieldGroup>
-              </form>
+                    <HStack gap={3} hAlign="end">
+                      <Button label="Cancel" variant="ghost" onClick={() => setIsEditing(false)} />
+                      <Button label="Save changes" variant="primary" type="submit" isLoading={isSaving} />
+                    </HStack>
+                  </VStack>
+                </form>
+              </Card>
+            ) : profile.profile_description ? (
+              <Markdown headingLevelStart={2}>{profile.profile_description}</Markdown>
             ) : (
-              <div className="markdown-content text-sm text-gray-200">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                  {profile.profile_description || "_No description yet._"}
-                </ReactMarkdown>
-              </div>
+              <Text type="body" color="secondary">
+                {isOwner ? "You haven't written a bio yet." : "No bio yet."}
+              </Text>
             )}
-          </div>
-        </div>
 
-        <div className="rounded border border-gray-800 bg-[#0f1117]">
-          <div className="border-b border-gray-800 px-6 py-4">
-            <h2 className="text-lg font-semibold text-white">Templates</h2>
-            {/* <p className="text-sm text-gray-400">Templates created by {profile.username}.</p> */}
-          </div>
-          {templates.length === 0 ? (
-            <div className="px-6 py-8 text-sm text-gray-500">No templates yet.</div>
-          ) : (
-            templates.map((template) => (
-              <TemplateItem key={template.TemplateID} template={template} />
-            ))
-          )}
-        </div>
-      </div>
-    </div>
+            <VStack gap={3}>
+              <HStack gap={2} vAlign="center">
+                <Heading level={2}>Templates</Heading>
+                {templates && templates.length > 0 && (
+                  <Text type="body" color="secondary" hasTabularNumbers>
+                    {templates.length}
+                  </Text>
+                )}
+              </HStack>
+              {templates === null ? (
+                <VStack gap={3}>
+                  <Skeleton width="60%" height={14} />
+                  <Skeleton width="40%" height={14} />
+                </VStack>
+              ) : (
+                <TemplateTable
+                  templates={templates}
+                  hasOwner={false}
+                  emptyState={
+                    <EmptyState
+                      isCompact
+                      icon={<Icon icon={PackageOpen} color="secondary" />}
+                      title={isOwner ? "You haven't published a template yet" : "No templates yet"}
+                      actions={
+                        isOwner ? (
+                          <Button label="Add template" variant="primary" href="/home/templates/new" />
+                        ) : undefined
+                      }
+                    />
+                  }
+                />
+              )}
+            </VStack>
+          </VStack>
+        </LayoutContent>
+      }
+    />
   );
 }

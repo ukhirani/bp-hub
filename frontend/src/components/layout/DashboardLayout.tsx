@@ -1,43 +1,83 @@
-import { Outlet } from "react-router-dom";
-import { Menu } from "lucide-react";
-import Sidebar from "./Sidebar";
-import { NavigationProvider, useNavigation } from "@/context/NavigationContext";
-import { useAuth } from "@/context/AuthContext";
-import { Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import Snackbar, { type SnackbarNotice } from "@/components/ui/snackbar";
+import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { AppShell } from "@astryxdesign/core/AppShell";
+import {
+  SideNav,
+  SideNavHeading,
+  SideNavItem,
+  SideNavSection,
+} from "@astryxdesign/core/SideNav";
+import { Button } from "@astryxdesign/core/Button";
+import { Icon } from "@astryxdesign/core/Icon";
+import { Skeleton } from "@astryxdesign/core/Skeleton";
+import { BookOpen, LayoutList, LogOut, Plus, UserRound } from "lucide-react";
 
-function DashboardContent() {
-  const { setSidebarOpen } = useNavigation();
+import BrandMark from "@/components/BrandMark";
+import Snackbar, { type SnackbarNotice } from "@/components/ui/snackbar";
+import { useAuth } from "@/context/AuthContext";
+
+function AppSideNav() {
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const { username, isLoading, clearToken } = useAuth();
+
+  const profilePath = username ? `/home/profile/${username}` : undefined;
+  const isTemplates =
+    pathname === "/home" ||
+    (pathname.startsWith("/home/templates/") &&
+      pathname !== "/home/templates/new");
+
+  const handleLogout = () => {
+    clearToken();
+    navigate("/login", { replace: true });
+  };
 
   return (
-    <div className="min-h-screen bg-[#0a0b0f] flex">
-      {/* Sidebar - fixed position */}
-      <Sidebar />
-
-      {/* Main content - with left margin to account for fixed sidebar */}
-      <main className="flex-1 flex flex-col min-w-0 lg:ml-64">
-        {/* Header - sticky */}
-        <header className="sticky top-0 z-30 bg-[#0a0b0f] border-b border-gray-800 lg:hidden">
-          <div className="flex items-center gap-4 px-4 sm:px-6 py-4">
-            {/* Mobile menu button */}
-            <button
-              onClick={() => setSidebarOpen(true)}
-              className="p-2 -ml-2 text-gray-400 hover:text-white"
-            >
-              <Menu className="w-5 h-5" />
-            </button>
-          </div>
-        </header>
-
-        {/* Page content - scrollable */}
-        <div className="flex-1 overflow-auto">
-          <div className="pt-4">
-            <Outlet />
-          </div>
-        </div>
-      </main>
-    </div>
+    <SideNav
+      collapsible
+      header={
+        <SideNavHeading
+          heading="BP Hub"
+          subheading="Boilerplate templates"
+          headingHref="/home"
+          icon={<BrandMark size={28} label="" />}
+        />
+      }
+      topContent={
+        <Button
+          label="Add template"
+          variant="primary"
+          icon={<Icon icon={Plus} />}
+          href="/home/templates/new"
+          width="100%"
+        />
+      }
+      footer={
+        <SideNavSection title="Account" isHeaderHidden>
+          {isLoading || !username ? (
+            <Skeleton height={36} radius={2} />
+          ) : (
+            <SideNavItem
+              label={username}
+              icon={UserRound}
+              href={profilePath}
+              isSelected={pathname === profilePath}
+            />
+          )}
+          <SideNavItem label="Log out" icon={LogOut} onClick={handleLogout} />
+        </SideNavSection>
+      }
+    >
+      <SideNavSection title="Registry" isHeaderHidden>
+        <SideNavItem
+          label="Templates"
+          icon={LayoutList}
+          href="/home"
+          isSelected={isTemplates}
+        />
+        <SideNavItem label="Documentation" icon={BookOpen} href="/docs" />
+      </SideNavSection>
+    </SideNav>
   );
 }
 
@@ -45,13 +85,12 @@ export default function DashboardLayout() {
   const { token } = useAuth();
   const [notice, setNotice] = useState<SnackbarNotice | null>(null);
 
+  // A page that navigated here can leave one notice behind (e.g. "Template created").
   useEffect(() => {
     const stored = sessionStorage.getItem("app_notice");
     if (!stored) return;
-
     try {
-      const parsed = JSON.parse(stored) as SnackbarNotice;
-      setNotice(parsed);
+      setNotice(JSON.parse(stored) as SnackbarNotice);
     } catch {
       setNotice(null);
     } finally {
@@ -59,15 +98,14 @@ export default function DashboardLayout() {
     }
   }, []);
 
-  // Redirect to landing page if not authenticated
   if (!token) {
     return <Navigate to="/" replace />;
   }
 
   return (
-    <NavigationProvider>
+    <AppShell sideNav={<AppSideNav />}>
       <Snackbar notice={notice} onClose={() => setNotice(null)} />
-      <DashboardContent />
-    </NavigationProvider>
+      <Outlet />
+    </AppShell>
   );
 }

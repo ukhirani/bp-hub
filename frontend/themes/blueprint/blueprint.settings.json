@@ -1,0 +1,66 @@
+{
+  "name": "blueprint",
+  "like": "neutral",
+  "mode": "both",
+  "settings": [
+    {
+      "thing": "accent",
+      "value": "#1f3fd6",
+      "source": "dial"
+    },
+    {
+      "thing": "neutral",
+      "value": "#5d6577",
+      "source": "dial"
+    },
+    {
+      "thing": "corners",
+      "value": "small",
+      "source": "dial"
+    },
+    {
+      "thing": "font",
+      "value": "mona-sans",
+      "source": "dial"
+    },
+    {
+      "thing": "font",
+      "value": "jetbrains-mono",
+      "source": "dial",
+      "on": "code"
+    },
+    {
+      "thing": "surfaces",
+      "value": "outlined",
+      "source": "dial"
+    },
+    {
+      "thing": "headings",
+      "value": "semibold",
+      "source": "dial",
+      "axis": "weight"
+    },
+    {
+      "thing": "headings",
+      "value": "tight",
+      "source": "dial",
+      "axis": "tracking"
+    },
+    {
+      "thing": "background-color",
+      "value": "var(--color-accent-muted)",
+      "source": "property",
+      "on": "side-nav-item",
+      "state": "selected"
+    },
+    {
+      "thing": "color",
+      "value": "var(--color-text-accent)",
+      "source": "property",
+      "on": "side-nav-item",
+      "state": "selected"
+    }
+  ],
+  "lifted": [],
+  "palette": "a9facc5422e64534bd6b08cf6cf75bafa98a3811a1dfbb65fa70e201430a524f"
+}

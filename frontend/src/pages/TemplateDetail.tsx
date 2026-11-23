@@ -1,168 +1,66 @@
-import { useState, useEffect, useMemo } from "react";
-import { useParams, Link } from "react-router-dom";
-import {
-  Copy,
-  Check,
-  FileCode,
-  BookOpen,
-  Terminal,
-  ArrowLeft,
-  ExternalLink,
-} from "lucide-react";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { Layout, LayoutContent, LayoutPanel } from "@astryxdesign/core/Layout";
+import { HStack, VStack, StackItem } from "@astryxdesign/core/Stack";
+import { Breadcrumbs, BreadcrumbItem } from "@astryxdesign/core/Breadcrumbs";
+import { Heading } from "@astryxdesign/core/Heading";
+import { Text } from "@astryxdesign/core/Text";
+import { Link } from "@astryxdesign/core/Link";
+import { Token } from "@astryxdesign/core/Token";
+import { Badge } from "@astryxdesign/core/Badge";
+import { CodeBlock } from "@astryxdesign/core/CodeBlock";
+import { Markdown } from "@astryxdesign/core/Markdown";
+import { MetadataList, MetadataListItem } from "@astryxdesign/core/MetadataList";
+import { Timestamp } from "@astryxdesign/core/Timestamp";
+import { Divider } from "@astryxdesign/core/Divider";
+import { EmptyState } from "@astryxdesign/core/EmptyState";
+import { Skeleton } from "@astryxdesign/core/Skeleton";
+import { Button } from "@astryxdesign/core/Button";
+import { Icon } from "@astryxdesign/core/Icon";
+import { useMediaQuery } from "@astryxdesign/core/hooks";
+import { FileQuestion } from "lucide-react";
+
 import type { Template } from "@/types/Template";
-import { formatRelativeTime } from "@/lib/utils";
-import Prism from "prismjs";
-import "prismjs/themes/prism-tomorrow.css";
-import "prismjs/components/prism-javascript";
-import "prismjs/components/prism-typescript";
-import "prismjs/components/prism-jsx";
-import "prismjs/components/prism-tsx";
-import "prismjs/components/prism-python";
-import "prismjs/components/prism-java";
-import "prismjs/components/prism-go";
-import "prismjs/components/prism-rust";
-import "prismjs/components/prism-c";
-import "prismjs/components/prism-cpp";
-import "prismjs/components/prism-ruby";
-import "prismjs/components/prism-css";
-import "prismjs/components/prism-json";
-import "prismjs/components/prism-bash";
+import { API_BASE } from "@/lib/api";
+import { TYPE_LABELS, codeLanguage, tagColor } from "@/lib/templates";
 
-// Language color mapping for tags
-const tagColors: Record<string, string> = {
-  go: "bg-cyan-400",
-  golang: "bg-cyan-400",
-  typescript: "bg-blue-500",
-  ts: "bg-blue-500",
-  javascript: "bg-yellow-400",
-  js: "bg-yellow-400",
-  python: "bg-blue-400",
-  rust: "bg-orange-500",
-  ruby: "bg-red-500",
-  java: "bg-red-400",
-  cpp: "bg-pink-500",
-  c: "bg-gray-400",
-  default: "bg-gray-500",
-};
-
-function getTagColor(tag: string): string {
-  return tagColors[tag.toLowerCase()] || tagColors.default;
-}
-
-// Map language tags to Prism language identifiers
-function getPrismLanguage(lang?: string): string {
-  if (!lang) return "javascript";
-  const langMap: Record<string, string> = {
-    js: "javascript",
-    ts: "typescript",
-    py: "python",
-    rb: "ruby",
-    rs: "rust",
-    go: "go",
-    java: "java",
-    cpp: "cpp",
-    c: "c",
-    jsx: "jsx",
-    tsx: "tsx",
-    json: "json",
-    bash: "bash",
-    sh: "bash",
-    css: "css",
-  };
-  return langMap[lang.toLowerCase()] || lang.toLowerCase();
-}
-
-// Code block component with syntax highlighting
-function CodeBlock({
-  code,
-  language,
+function Section({
+  id,
   title,
+  description,
+  children,
 }: {
-  code: string;
-  language?: string;
-  title?: string;
+  id: string;
+  title: string;
+  description?: string;
+  children: React.ReactNode;
 }) {
-  const [copied, setCopied] = useState(false);
-
-  const highlighted = useMemo(() => {
-    const prismLang = getPrismLanguage(language);
-    const grammar = Prism.languages[prismLang] || Prism.languages.javascript;
-    return Prism.highlight(code, grammar, prismLang);
-  }, [code, language]);
-
-  const handleCopy = async () => {
-    await navigator.clipboard.writeText(code);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
   return (
-    <div className="rounded border border-gray-700 overflow-hidden">
-      {title && (
-        <div className="flex items-center justify-between px-4 py-2 bg-gray-800 border-b border-gray-700">
-          <div className="flex items-center gap-2">
-            <FileCode className="w-4 h-4 text-gray-400" />
-            <span className="text-sm text-gray-300">{title}</span>
-            {language && (
-              <span className="text-xs text-gray-500">({language})</span>
-            )}
-          </div>
-          <button
-            onClick={handleCopy}
-            className="flex items-center gap-1 px-2 py-1 text-xs text-gray-400 hover:text-white transition-colors"
-          >
-            {copied ? (
-              <>
-                <Check className="w-3.5 h-3.5 text-green-400" />
-                <span className="text-green-400">Copied!</span>
-              </>
-            ) : (
-              <>
-                <Copy className="w-3.5 h-3.5" />
-                <span>Copy</span>
-              </>
-            )}
-          </button>
-        </div>
-      )}
-      <pre className="p-4 bg-gray-900 overflow-x-auto">
-        <code
-          className={`language-${getPrismLanguage(language)} text-sm leading-relaxed block`}
-          dangerouslySetInnerHTML={{ __html: highlighted }}
-        />
-      </pre>
-    </div>
+    <VStack gap={3}>
+      <VStack gap={1}>
+        <Heading level={2} id={id}>
+          {title}
+        </Heading>
+        {description && (
+          <Text type="body" color="secondary">
+            {description}
+          </Text>
+        )}
+      </VStack>
+      {children}
+    </VStack>
   );
 }
 
-// Command list component
-function CommandList({
-  commands,
-  title,
-}: {
-  commands: string[];
-  title: string;
-}) {
-  if (!commands || commands.length === 0) return null;
-
+function DetailSkeleton() {
   return (
-    <div className="rounded-lg border border-gray-700 overflow-hidden">
-      <div className="flex items-center gap-2 px-4 py-2 bg-gray-800 border-b border-gray-700">
-        <Terminal className="w-4 h-4 text-gray-400" />
-        <span className="text-sm text-gray-300">{title}</span>
-      </div>
-      <div className="p-4 bg-[#0d1117] space-y-2">
-        {commands.map((cmd, index) => (
-          <div
-            key={index}
-            className="flex items-center gap-2 font-mono text-sm"
-          >
-            <span className="text-gray-500">$</span>
-            <span className="text-green-400">{cmd}</span>
-          </div>
-        ))}
-      </div>
-    </div>
+    <VStack gap={6} padding={6}>
+      <Skeleton width={220} height={12} />
+      <Skeleton width="45%" height={28} />
+      <Skeleton width="60%" height={14} />
+      <Skeleton width="100%" height={56} />
+      <Skeleton width="100%" height={240} />
+    </VStack>
   );
 }
 
@@ -171,232 +69,222 @@ export default function TemplateDetail() {
   const [template, setTemplate] = useState<Template | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const isWide = useMediaQuery("(min-width: 1024px)", true);
 
   useEffect(() => {
+    const controller = new AbortController();
     async function fetchTemplate() {
       try {
         setLoading(true);
-        // Fetch all templates and find the matching one
-        const response = await fetch(
-          "https://bp-hub-render-service.onrender.com/getTemplates",
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch template");
-        }
+        setError(null);
+        const response = await fetch(`${API_BASE}/getTemplates`, {
+          signal: controller.signal,
+        });
+        if (!response.ok) throw new Error("The registry did not answer.");
         const data: Template[] = await response.json();
         const found = data.find(
           (t) => t.Username === username && t.TemplateName === templateName,
         );
-        if (!found) {
-          throw new Error("Template not found");
-        }
+        if (!found) throw new Error("Template not found");
         setTemplate(found);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "An error occurred");
+        if (err instanceof DOMException && err.name === "AbortError") return;
+        setError(err instanceof Error ? err.message : "Something went wrong.");
       } finally {
-        setLoading(false);
+        if (!controller.signal.aborted) setLoading(false);
       }
     }
-
     fetchTemplate();
+    return () => controller.abort();
   }, [username, templateName]);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400"></div>
-      </div>
-    );
-  }
+  if (loading) return <DetailSkeleton />;
 
   if (error || !template) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 gap-4">
-        <p className="text-red-400">{error || "Template not found"}</p>
-        <Link
-          to="/"
-          className="flex items-center gap-2 text-blue-400 hover:underline"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to templates
-        </Link>
-      </div>
+      <EmptyState
+        icon={<Icon icon={FileQuestion} size="lg" color="secondary" />}
+        title={error === "Template not found" ? "Template not found" : "Couldn't load this template"}
+        description={
+          error === "Template not found"
+            ? `There's no template called ${username}/${templateName}. It may have been renamed or removed.`
+            : `${error ?? ""} Try again in a moment.`
+        }
+        actions={<Button label="Back to templates" variant="primary" href="/home" />}
+      />
     );
   }
 
   const primaryTag = template.Tags?.[0];
-  const usageCommand = `bp clone ${template.Username}/${template.TemplateName} --alias <alias-name>`;
+  const cloneCommand = `bp clone ${template.Username}/${template.TemplateName} --alias <alias-name>`;
+  const hasPre = template.PreCmds?.length > 0;
+  const hasPost = template.PostCmds?.length > 0;
+
+  const usage = (
+    <VStack gap={2}>
+      <CodeBlock code={cloneCommand} language="bash" width="100%" hasLanguageLabel={false} />
+      <Text type="supporting" color="secondary">
+        Clone it under an alias, then generate it anywhere with{" "}
+        <Text type="code">bp gen &lt;alias-name&gt;</Text>.
+      </Text>
+    </VStack>
+  );
+
+  const details = (
+    <VStack gap={5}>
+      <Heading level={2}>About</Heading>
+      <MetadataList label={{ position: "start", width: 96 }}>
+        <MetadataListItem label="Owner">
+          <Link href={`/home/profile/${template.Username}`}>{template.Username}</Link>
+        </MetadataListItem>
+        <MetadataListItem label="Type">
+          {TYPE_LABELS[template.Type] ?? template.Type}
+        </MetadataListItem>
+        {template.CreatedAt && (
+          <MetadataListItem label="Created">
+            <Timestamp value={template.CreatedAt} format="date" type="body" color="primary" />
+          </MetadataListItem>
+        )}
+        {template.UpdatedAt && (
+          <MetadataListItem label="Updated">
+            <Timestamp value={template.UpdatedAt} format="relative" type="body" color="primary" />
+          </MetadataListItem>
+        )}
+        {template.GithubRepoLink && (
+          <MetadataListItem label="Source">
+            <Link href={template.GithubRepoLink} isExternalLink>
+              GitHub
+            </Link>
+          </MetadataListItem>
+        )}
+      </MetadataList>
+    </VStack>
+  );
+
+  const main = (
+    <VStack gap={8}>
+      <VStack gap={3}>
+        <Breadcrumbs variant="supporting">
+          <BreadcrumbItem href="/home">Templates</BreadcrumbItem>
+          <BreadcrumbItem href={`/home/profile/${template.Username}`}>
+            {template.Username}
+          </BreadcrumbItem>
+          <BreadcrumbItem isCurrent>{template.TemplateName}</BreadcrumbItem>
+        </Breadcrumbs>
+        <HStack gap={3} vAlign="center" wrap="wrap">
+          <Heading level={1} wordBreak="break-word">
+            {template.TemplateName}
+          </Heading>
+          <Badge label={TYPE_LABELS[template.Type] ?? template.Type} />
+        </HStack>
+        {template.Description && (
+          <Text type="large" color="secondary" textWrap="pretty">
+            {template.Description}
+          </Text>
+        )}
+        {template.Tags?.length > 0 && (
+          <HStack gap={1} wrap="wrap">
+            {template.Tags.map((tag) => (
+              <Token key={tag} label={tag} size="sm" color={tagColor(tag)} />
+            ))}
+          </HStack>
+        )}
+        {usage}
+      </VStack>
+
+      {!isWide && (
+        <>
+          <Divider />
+          {details}
+        </>
+      )}
+
+      {template.Type === "file" && template.Code && (
+        <Section
+          id="source"
+          title="Source"
+          description="The file bp writes when you generate this template."
+        >
+          <CodeBlock
+            code={template.Code}
+            language={codeLanguage(primaryTag)}
+            title={template.FileName || `main.${primaryTag || "txt"}`}
+            hasLineNumbers
+            isCollapsible
+            collapsibleThreshold={40}
+            maxHeight={560}
+            width="100%"
+          />
+        </Section>
+      )}
+
+      {template.Type === "dir" && template.GithubRepoLink && (
+        <Section
+          id="repository"
+          title="Repository"
+          description="bp copies this repository's files when you generate the template."
+        >
+          <HStack gap={2} vAlign="center">
+            <Link href={template.GithubRepoLink} isExternalLink>
+              {template.GithubRepoLink}
+            </Link>
+          </HStack>
+        </Section>
+      )}
+
+      {(hasPre || hasPost) && (
+        <Section
+          id="commands"
+          title="Setup commands"
+          description="bp runs these in your shell around generation, in this order."
+        >
+          <VStack gap={4}>
+            {hasPre && (
+              <CodeBlock
+                title="Before generating"
+                hasLanguageLabel={false}
+                code={template.PreCmds.join("\n")}
+                language="bash"
+                width="100%"
+              />
+            )}
+            {hasPost && (
+              <CodeBlock
+                title="After generating"
+                hasLanguageLabel={false}
+                code={template.PostCmds.join("\n")}
+                language="bash"
+                width="100%"
+              />
+            )}
+          </VStack>
+        </Section>
+      )}
+
+      {template.Documentation && (
+        <Section id="documentation" title="Documentation">
+          <Markdown headingLevelStart={3}>{template.Documentation}</Markdown>
+        </Section>
+      )}
+    </VStack>
+  );
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
-      {/* Back link */}
-      {/* <Link */}
-      {/*   to="/" */}
-      {/*   className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-6 transition-colors" */}
-      {/* > */}
-      {/*   <ArrowLeft className="w-4 h-4" /> */}
-      {/*   <span>Back to templates</span> */}
-      {/* </Link> */}
-
-      {/* Header */}
-      <div className="border-b border-gray-800 pb-4 mb-4">
-        {/* Title row */}
-        <div className="flex items-start justify-between flex-wrap gap-3">
-          <div>
-            <div className="flex items-center gap-2 flex-wrap text-lg sm:text-xl">
-              <span className="text-blue-400 font-medium">
-                {template.Username}
-              </span>
-              <span className="text-gray-500">/</span>
-              <span className="text-blue-400 font-semibold">
-                {template.TemplateName}
-              </span>
-              <span className="px-2 py-0.5 text-[11px] font-medium text-gray-400 border border-gray-700 rounded-full">
-                {template.Type}
-              </span>
-              {template.GithubRepoLink && (
-                <a
-                  href={template.GithubRepoLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1 text-xs text-gray-400 hover:text-blue-400 transition-colors"
-                >
-                  <ExternalLink className="w-3.5 h-3.5" />
-                  GitHub
-                </a>
-              )}
-            </div>
-          </div>
-
-          {template.Tags && template.Tags.length > 0 && (
-            <div className="flex items-center gap-2 flex-wrap">
-              {template.Tags.map((tag, index) => (
-                <span
-                  key={index}
-                  className="inline-flex items-center gap-1.5 px-2 py-0.5 text-[11px] font-medium text-blue-400 bg-blue-500/10 border border-blue-500/30 rounded-full hover:bg-blue-500/20 transition-colors cursor-pointer"
-                >
-                  {index === 0 && (
-                    <span className={`w-2 h-2 rounded-full ${getTagColor(tag)}`} />
-                  )}
-                  {tag}
-                </span>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Description */}
-        {template.Description && (
-          <p className="mt-3 text-sm text-gray-400">{template.Description}</p>
-        )}
-
-        {/* Meta info */}
-        <div className="flex items-center gap-4 mt-3 text-xs text-gray-500">
-          <span>Created {formatRelativeTime(template.CreatedAt)}</span>
-          <span>Updated {formatRelativeTime(template.UpdatedAt)}</span>
-        </div>
-      </div>
-
-      {/* Content sections */}
-      <div className="space-y-8">
-        {/* Usage section */}
-        <section>
-          <h2 className="flex items-center gap-2 text-lg font-semibold text-white mb-4">
-            <Terminal className="w-5 h-5" />
-            Usage
-          </h2>
-          <CodeBlock code={usageCommand} title="Quick start" />
-        </section>
-
-        {/* Pre-commands */}
-        {template.PreCmds && template.PreCmds.length > 0 && (
-          <section>
-            <h2 className="flex items-center gap-2 text-lg font-semibold text-white mb-4">
-              <Terminal className="w-5 h-5" />
-              Pre-Generation Commands
-            </h2>
-            <CommandList
-              commands={template.PreCmds}
-              title="Runs before generation"
-            />
-          </section>
-        )}
-
-        {/* Post-commands */}
-        {template.PostCmds && template.PostCmds.length > 0 && (
-          <section>
-            <h2 className="flex items-center gap-2 text-lg font-semibold text-white mb-4">
-              <Terminal className="w-5 h-5" />
-              Post-Generation Commands
-            </h2>
-            <CommandList
-              commands={template.PostCmds}
-              title="Runs after generation"
-            />
-          </section>
-        )}
-
-        {/* Code section */}
-        {template.Type === "file" && template.Code && (
-          <section>
-            <h2 className="flex items-center gap-2 text-lg font-semibold text-white mb-4">
-              <FileCode className="w-5 h-5" />
-              Source Code
-            </h2>
-            <CodeBlock
-              code={template.Code}
-              language={primaryTag}
-              title={template.FileName || `main.${primaryTag || "txt"}`}
-            />
-          </section>
-        )}
-
-        {/* Repo section */}
-        {template.Type === "dir" && template.GithubRepoLink && (
-          <section>
-            <h2 className="flex items-center gap-2 text-lg font-semibold text-white mb-4">
-              <ExternalLink className="w-5 h-5" />
-              Repository
-            </h2>
-            <a
-              href={template.GithubRepoLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-blue-400 hover:underline break-all"
-            >
-              {template.GithubRepoLink}
-            </a>
-          </section>
-        )}
-
-        {/* Documentation */}
-        {template.Documentation && (
-          <section>
-            <h2 className="flex items-center gap-2 text-lg font-semibold text-white mb-4">
-              <BookOpen className="w-5 h-5" />
-              Documentation
-            </h2>
-            <div className="prose prose-invert max-w-none">
-              <div className="p-4 bg-gray-800/50 border border-gray-700 rounded-lg">
-                <pre className="text-sm text-gray-300 whitespace-pre-wrap font-sans">
-                  {template.Documentation}
-                </pre>
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* Fork info 
-        {!!template.ForkOf && (
-          <section className="p-4 bg-gray-800/30 border border-gray-700 rounded-lg">
-            <p className="text-sm text-gray-400">
-              <GitFork className="w-4 h-4 inline mr-1" />
-              Forked from template ID:{" "}
-              <span className="text-blue-400">{template.ForkOf}</span>
-            </p>
-          </section>
-        )}*/}
-      </div>
-    </div>
+    <Layout
+      height="auto"
+      contentWidth={1120}
+      content={
+        <LayoutContent padding={6} isScrollable={false}>
+          {main}
+        </LayoutContent>
+      }
+      end={
+        isWide ? (
+          <LayoutPanel width={340} padding={6} isScrollable={false} label="Template details">
+            <StackItem>{details}</StackItem>
+          </LayoutPanel>
+        ) : undefined
+      }
+    />
   );
 }

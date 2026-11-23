@@ -1,196 +1,44 @@
-@import "tailwindcss";
+/*
+ * Cascade order: reset < tailwind theme < preflight < Astryx components
+ * < Astryx theme < components < utilities. Declared before any import so
+ * the theme module (astryx-themes.ts) cannot reorder it.
+ */
+@layer reset, theme, base, astryx-base, astryx-theme, components, utilities;
 
-@layer base {
-  :root {
-    /* Light theme (default / system light) */
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
+@import "@fontsource-variable/mona-sans/wdth.css";
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/preflight.css" layer(base);
+@import "@astryxdesign/core/reset.css";
+@import "@astryxdesign/core/astryx.css";
+@import "@astryxdesign/core/tailwind-theme.css";
+@import "tailwindcss/utilities.css" layer(utilities);
 
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
-
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 5.9% 10%;
-
-    --radius: 0.75rem;
-  }
-
-  * {
-    border-color: hsl(var(--border));
-  }
-
-  body {
-    background-color: hsl(var(--background));
-    color: hsl(var(--foreground));
-  }
+/* The whole app uses Mona Sans; the variable cut adds the width axis the
+   landing page's display type uses. */
+:root {
+  --font-family-display: "Mona Sans Variable", "Mona Sans", system-ui, sans-serif;
+  color-scheme: light dark;
 }
 
-@media (prefers-color-scheme: dark) {
-  @layer base {
-    :root {
-      /* Dark theme (system dark) */
-      --background: 240 10% 3.9%;
-      --foreground: 0 0% 98%;
-
-      --card: 240 10% 3.9%;
-      --card-foreground: 0 0% 98%;
-
-      --popover: 240 10% 3.9%;
-      --popover-foreground: 0 0% 98%;
-
-      --primary: 0 0% 98%;
-      --primary-foreground: 240 5.9% 10%;
-
-      --secondary: 240 3.7% 15.9%;
-      --secondary-foreground: 0 0% 98%;
-
-      --muted: 240 3.7% 15.9%;
-      --muted-foreground: 240 5% 64.9%;
-
-      --accent: 240 3.7% 15.9%;
-      --accent-foreground: 0 0% 98%;
-
-      --destructive: 0 62.8% 30.6%;
-      --destructive-foreground: 0 0% 98%;
-
-      --border: 240 3.7% 15.9%;
-      --input: 240 3.7% 15.9%;
-      --ring: 240 4.9% 83.9%;
-
-      --radius: 0.75rem;
-    }
-  }
+/* Browser surfaces carry the theme too: selection, caret, scrollbars,
+   focus and tabular numerals. */
+::selection {
+  background: var(--color-accent-muted);
+  color: var(--color-text-primary);
 }
 
-@layer utilities {
-  /* Map shadcn semantic classes to our CSS variables */
-  .bg-background {
-    background-color: hsl(var(--background));
-  }
-
-  .text-foreground {
-    color: hsl(var(--foreground));
-  }
-
-  .bg-primary {
-    background-color: hsl(var(--primary));
-  }
-
-  .text-primary-foreground {
-    color: hsl(var(--primary-foreground));
-  }
-
-  .bg-secondary {
-    background-color: hsl(var(--secondary));
-  }
-
-  .text-secondary-foreground {
-    color: hsl(var(--secondary-foreground));
-  }
-
-  .bg-accent {
-    background-color: hsl(var(--accent));
-  }
-
-  .text-accent-foreground {
-    color: hsl(var(--accent-foreground));
-  }
-
-  .bg-destructive {
-    background-color: hsl(var(--destructive));
-  }
-
-  .text-destructive-foreground {
-    color: hsl(var(--destructive-foreground));
-  }
+html {
+  caret-color: var(--color-accent);
+  scrollbar-color: var(--color-border-emphasized) transparent;
+  font-variant-numeric: tabular-nums;
+  text-underline-offset: 0.2em;
 }
 
-.bp-logo {
-  width: 100px;
-  height: auto; /* Maintains aspect ratio */
-  object-fit: cover; /* Ensures the image covers the area without distortion */
+body {
+  background-color: var(--color-background-body);
+  color: var(--color-text-primary);
 }
 
-.markdown-content {
-  line-height: 1.6;
-}
-
-.markdown-content h1 {
-  font-size: 1.5rem;
-  line-height: 2rem;
-  font-weight: 600;
-  margin: 0 0 0.75rem;
-}
-
-.markdown-content h2 {
-  font-size: 1.25rem;
-  line-height: 1.75rem;
-  font-weight: 600;
-  margin: 0.75rem 0 0.5rem;
-}
-
-.markdown-content h3 {
-  font-size: 1.125rem;
-  line-height: 1.5rem;
-  font-weight: 600;
-  margin: 0.75rem 0 0.5rem;
-}
-
-.markdown-content p {
-  margin: 0 0 0.75rem;
-}
-
-.markdown-content ul,
-.markdown-content ol {
-  margin: 0 0 0.75rem 1.25rem;
-  padding: 0;
-}
-
-.markdown-content li {
-  margin: 0.25rem 0;
-}
-
-.markdown-content a {
-  color: #60a5fa;
-}
-
-.markdown-content a:hover {
-  text-decoration: underline;
-}
-
-.markdown-content code {
-  background: rgba(148, 163, 184, 0.15);
-  padding: 0.1rem 0.3rem;
-  border-radius: 0.25rem;
-}
-
-.markdown-content pre {
-  background: #0b0d12;
-  padding: 0.75rem;
-  border-radius: 0.5rem;
-  overflow-x: auto;
-}
-
-.markdown-content pre code {
-  background: transparent;
-  padding: 0;
+#root {
+  min-height: 100dvh;
 }

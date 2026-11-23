@@ -1,0 +1,112 @@
+/*
+ * The blueprint field: BP's brand ground for the public pages (landing,
+ * sign-in). A drafting sheet in the theme's cobalt with a minor and major
+ * grid. App screens never use it; they stay on the Astryx theme surfaces.
+ *
+ * The cobalt is the theme's accent shade 40 (light) and a deeper shade for
+ * dark mode, from themes/blueprint/tokens/blueprint.palette.ts.
+ */
+@layer components {
+  .bp-field {
+    --bp-ink: #fff;
+    --bp-ink-2: rgb(255 255 255 / 0.76);
+    --bp-ink-3: rgb(255 255 255 / 0.56);
+    --bp-rule: rgb(255 255 255 / 0.22);
+    --bp-cobalt: light-dark(#1f3fd6, #1a2f86);
+    --bp-cobalt-deep: light-dark(#1834b4, #142670);
+    --bp-grid-minor: rgb(255 255 255 / 0.07);
+    --bp-grid-major: rgb(255 255 255 / 0.14);
+
+    position: relative;
+    isolation: isolate;
+    color: var(--bp-ink);
+    background-color: var(--bp-cobalt);
+    background-image:
+      linear-gradient(var(--bp-grid-major) 1px, transparent 1px),
+      linear-gradient(90deg, var(--bp-grid-major) 1px, transparent 1px),
+      linear-gradient(var(--bp-grid-minor) 1px, transparent 1px),
+      linear-gradient(90deg, var(--bp-grid-minor) 1px, transparent 1px);
+    background-size:
+      120px 120px,
+      120px 120px,
+      24px 24px,
+      24px 24px;
+    background-position: -1px -1px;
+  }
+
+  /* Text set on the field. Astryx text inside inherits these colors. */
+  .bp-field .bp-ink-2 {
+    color: var(--bp-ink-2);
+  }
+  .bp-field .bp-ink-3 {
+    color: var(--bp-ink-3);
+  }
+
+  .bp-field ::selection {
+    background: rgb(255 255 255 / 0.9);
+    color: var(--bp-cobalt-deep);
+  }
+
+  /* Display type: Mona Sans at its widest, like a drawing's title block. */
+  .bp-display {
+    font-family: var(--font-family-display);
+    font-stretch: 125%;
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    line-height: 0.98;
+    text-wrap: balance;
+  }
+
+  /* A hairline dimension mark: a rule with end ticks and a centered label,
+     the way a drawing states a measurement. */
+  .bp-dimension {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-family-code);
+    font-size: 12px;
+    letter-spacing: 0.02em;
+    color: var(--bp-ink-2);
+  }
+  .bp-dimension::before,
+  .bp-dimension::after {
+    content: "";
+    flex: 1;
+    height: 9px;
+    border-block-start: 0;
+    background:
+      linear-gradient(var(--bp-rule), var(--bp-rule)) center / 100% 1px no-repeat,
+      linear-gradient(var(--bp-rule), var(--bp-rule)) left / 1px 100% no-repeat,
+      linear-gradient(var(--bp-rule), var(--bp-rule)) right / 1px 100% no-repeat;
+  }
+
+  /* Buttons on the field. The theme's primary is cobalt, which would vanish
+     on a cobalt ground, so the field's main action is white with cobalt ink. */
+  .bp-btn-light {
+    background-color: #fff;
+    color: var(--bp-cobalt-deep, #1834b4);
+    border-color: transparent;
+  }
+  .bp-btn-light:hover {
+    background-color: #eef1fd;
+  }
+  .bp-btn-light:active {
+    background-color: #dfe5fb;
+  }
+  .bp-btn-onfield {
+    background-color: transparent;
+    color: #fff;
+    border-color: transparent;
+  }
+  .bp-btn-onfield:hover {
+    background-color: rgb(255 255 255 / 0.12);
+  }
+  .bp-btn-onfield:active {
+    background-color: rgb(255 255 255 / 0.2);
+  }
+
+  /* Focus on the field stays visible against cobalt. */
+  .bp-field :focus-visible {
+    outline-color: var(--bp-ink);
+  }
+}
