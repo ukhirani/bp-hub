@@ -13,7 +13,7 @@ import { Banner } from "@astryxdesign/core/Banner";
 import BrandMark from "@/components/BrandMark";
 import MarkdownEditor from "@/components/ui/markdown-editor";
 import Snackbar, { type SnackbarNotice } from "@/components/ui/snackbar";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/auth-context";
 import { fetchUserStatus, postJSON } from "@/lib/api";
 
 type UsernameCheckResponse = {

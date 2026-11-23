@@ -17,7 +17,7 @@ import { ArrowRight } from "lucide-react";
 
 import BrandMark from "@/components/BrandMark";
 import CloneDemo from "@/components/landing/CloneDemo";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/auth-context";
 import "@/styles/blueprint.css";
 
 type Platform = "mac" | "linux" | "windows";

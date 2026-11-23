@@ -24,7 +24,7 @@ import { useMediaQuery } from "@astryxdesign/core/hooks";
 import { FileCode2, FolderGit2, X } from "lucide-react";
 
 import Snackbar, { type SnackbarNotice } from "@/components/ui/snackbar";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/auth-context";
 import { postJSON } from "@/lib/api";
 import { tagColor } from "@/lib/templates";
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { AppShell } from "@astryxdesign/core/AppShell";
 import {
   SideNav,
@@ -14,23 +14,17 @@ import { BookOpen, LayoutList, LogOut, Plus, UserRound } from "lucide-react";
 
 import BrandMark from "@/components/BrandMark";
 import Snackbar, { type SnackbarNotice } from "@/components/ui/snackbar";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/auth-context";
 
-function AppSideNav() {
+function AppSideNav({ onLogout }: { onLogout: () => void }) {
   const { pathname } = useLocation();
-  const navigate = useNavigate();
-  const { username, isLoading, clearToken } = useAuth();
+  const { username, isLoading } = useAuth();
 
   const profilePath = username ? `/home/profile/${username}` : undefined;
   const isTemplates =
     pathname === "/home" ||
     (pathname.startsWith("/home/templates/") &&
       pathname !== "/home/templates/new");
-
-  const handleLogout = () => {
-    clearToken();
-    navigate("/login", { replace: true });
-  };
 
   return (
     <SideNav
@@ -64,7 +58,7 @@ function AppSideNav() {
               isSelected={pathname === profilePath}
             />
           )}
-          <SideNavItem label="Log out" icon={LogOut} onClick={handleLogout} />
+          <SideNavItem label="Log out" icon={LogOut} onClick={onLogout} />
         </SideNavSection>
       }
     >
@@ -82,7 +76,9 @@ function AppSideNav() {
 }
 
 export default function DashboardLayout() {
-  const { token } = useAuth();
+  const { token, clearToken } = useAuth();
+  // Logging out sends you to sign in; losing the session any other way goes home.
+  const [loggedOut, setLoggedOut] = useState(false);
   const [notice, setNotice] = useState<SnackbarNotice | null>(null);
 
   // A page that navigated here can leave one notice behind (e.g. "Template created").
@@ -99,11 +95,20 @@ export default function DashboardLayout() {
   }, []);
 
   if (!token) {
-    return <Navigate to="/" replace />;
+    return <Navigate to={loggedOut ? "/login" : "/"} replace />;
   }
 
   return (
-    <AppShell sideNav={<AppSideNav />}>
+    <AppShell
+      sideNav={
+        <AppSideNav
+          onLogout={() => {
+            setLoggedOut(true);
+            clearToken();
+          }}
+        />
+      }
+    >
       <Snackbar notice={notice} onClose={() => setNotice(null)} />
       <Outlet />
     </AppShell>

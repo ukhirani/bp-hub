@@ -8,7 +8,7 @@ import { Text } from "@astryxdesign/core/Text";
 import { Link } from "@astryxdesign/core/Link";
 
 import AuthFrame from "@/components/AuthFrame";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/auth-context";
 import { postJSON } from "@/lib/api";
 
 type SignupSuccessResponse = {

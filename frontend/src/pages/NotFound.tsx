@@ -7,7 +7,7 @@ import { Button } from "@astryxdesign/core/Button";
 import { CodeBlock } from "@astryxdesign/core/CodeBlock";
 
 import BrandMark from "@/components/BrandMark";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/auth-context";
 
 export default function NotFound() {
   const { pathname } = useLocation();

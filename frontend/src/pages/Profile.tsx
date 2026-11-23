@@ -19,7 +19,7 @@ import MarkdownEditor from "@/components/ui/markdown-editor";
 import Snackbar, { type SnackbarNotice } from "@/components/ui/snackbar";
 import TemplateTable from "@/components/templates/TemplateTable";
 import type { Template } from "@/types/Template";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/auth-context";
 import { API_BASE, postJSON } from "@/lib/api";
 
 type UserProfile = {
